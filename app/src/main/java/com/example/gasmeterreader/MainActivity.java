@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
@@ -128,7 +129,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (imageBitmap != null) {
-                this.imageAnalyzer.detect(imageBitmap);
+                try {
+                    this.imageAnalyzer.detect(imageBitmap);
+                } finally {
+                    File photoFile = new File(getExternalFilesDir(null),
+                            "captured_image.jpg");
+                    if (photoFile.exists()) {
+                        Log.d("tryRes", String.valueOf(photoFile.delete()));
+                    }
+                }
                 update();
             }
         }
