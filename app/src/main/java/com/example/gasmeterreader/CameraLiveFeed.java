@@ -65,7 +65,7 @@ public class CameraLiveFeed {
         this.detectionStatusIcon = detectionStatusIcon;
         this.cameraExecutor = Executors.newSingleThreadExecutor();
         this.imageAnalyzer = new ImageAnalyzer(this.context);
-        this.detectionThreshold = 4;
+        this.detectionThreshold = 2;
         this.isDetected = false;
         this.dataResultText.setText(R.string.no_detection);
         this.idResultText.setText(R.string.no_detection);
@@ -80,8 +80,7 @@ public class CameraLiveFeed {
             if (!dataResult.isEmpty()) {
                 addString(dataResult,detectionCounterData);
             }
-            this.isDetected = getMaxCount(detectionCounterID) > detectionThreshold
-                    && getMaxCount(detectionCounterData) > detectionThreshold;
+            this.isDetected = getMaxCount(detectionCounterData) >= detectionThreshold;
             updateDetectionStatus();
         });
     }

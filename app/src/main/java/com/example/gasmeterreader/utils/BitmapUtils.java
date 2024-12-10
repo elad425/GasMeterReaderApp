@@ -34,7 +34,7 @@ public class BitmapUtils {
         }
 
         try {
-            Bitmap bitmap = Bitmap.createBitmap(original, left, top, width, height);
+            Bitmap bitmap = Bitmap.createBitmap(original, left - 10, top, width + 20, height);
             if (isDigit) {
                 return Bitmap.createScaledBitmap(bitmap, 320, 320, true);
             } else {
@@ -69,6 +69,11 @@ public class BitmapUtils {
     }
 
     public static Bitmap addPaddingToBitmap(Bitmap originalBitmap) {
+
+        if(originalBitmap == null){
+            return null;
+        }
+
         // Desired dimensions
         int newWidth = 1000;
         int newHeight = 3000;

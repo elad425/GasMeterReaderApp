@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
                     if (isGranted) {
-                        // Permission granted
+                        openCamera();
                     } else {
                         Toast.makeText(this,
                                 "Camera permission is required to use this feature",
@@ -71,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
         Button galleryButton = findViewById(R.id.gallery);
         galleryButton.setOnClickListener(v -> openGallery());
 
-        Button sync = findViewById(R.id.sync);
-        sync.setOnClickListener(v -> update());
     }
 
     private void checkAndRequestCameraPermission(Boolean isLive) {
@@ -95,9 +93,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void openCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
         File photoFile = new File(getExternalFilesDir(null), "captured_image.jpg");
-        photoUri = FileProvider.getUriForFile(this, "com.example.gasmeterreader.fileprovider", photoFile);
+        photoUri = FileProvider.getUriForFile(this,
+                "com.example.gasmeterreader.fileprovider", photoFile);
 
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
         startActivityForResult(cameraIntent, CAMERA_CAPTURE_REQUEST_CODE);
@@ -126,17 +124,18 @@ public class MainActivity extends AppCompatActivity {
                 if (data != null) {
                     Uri selectedImageUri = data.getData();
                     try {
-                        imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
-                        imageBitmap = rotateImageIfRequired(this,imageBitmap, selectedImageUri); // Adjust rotation
-                    } catch (IOException e) {
-                        Toast.makeText(this, "Error loading image", Toast.LENGTH_SHORT).show();
-                        return;
+                        imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
+                                selectedImageUri);
+                        imageBitmap = rotateImageIfRequired(this,imageBitmap,
+                                selectedImageUri);
+                    } catch (IOException ignored) {
                     }
                 }
             }
 
             if (imageBitmap != null) {
                 this.imageAnalyzer.detect(imageBitmap);
+                update();
             }
         }
     }
