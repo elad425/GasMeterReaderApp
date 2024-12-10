@@ -38,7 +38,7 @@ public class BitmapUtils {
             if (isDigit) {
                 return Bitmap.createScaledBitmap(bitmap, 320, 320, true);
             } else {
-                return Bitmap.createScaledBitmap(bitmap, 1080, 320, true);
+                return Bitmap.createScaledBitmap(bitmap, 1000, 500, true);
 
             }
         } catch (IllegalArgumentException e) {
@@ -68,10 +68,10 @@ public class BitmapUtils {
         }
     }
 
-    public static Bitmap addPaddingToBitmap(Bitmap originalBitmap, boolean invert) {
+    public static Bitmap addPaddingToBitmap(Bitmap originalBitmap) {
         // Desired dimensions
-        int newWidth = 1980;
-        int newHeight = 1020;
+        int newWidth = 1000;
+        int newHeight = 3000;
 
         // Create a new bitmap with the desired size
         Bitmap paddedBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
@@ -79,11 +79,7 @@ public class BitmapUtils {
         // Create a canvas to draw on the new bitmap
         Canvas canvas = new Canvas(paddedBitmap);
 
-        if (!invert) {
-            canvas.drawColor(Color.WHITE);
-        } else {
-            canvas.drawColor(Color.BLACK);
-        }
+        canvas.drawColor(Color.GRAY);
 
         // Calculate the top position to center the original bitmap vertically
         int height = (newHeight - originalBitmap.getHeight()) / 2;

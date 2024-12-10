@@ -1,5 +1,6 @@
 package com.example.gasmeterreader.ml;
 
+import static com.example.gasmeterreader.utils.BitmapUtils.addPaddingToBitmap;
 import static com.example.gasmeterreader.utils.BitmapUtils.cropBitmap;
 import static com.example.gasmeterreader.utils.BitmapUtils.saveBitmapToGallery;
 import static com.example.gasmeterreader.utils.BitmapUtils.toGrayscale;
@@ -66,8 +67,8 @@ public class ImageAnalyzer {
                 Arrays.asList("id", "data"), boxListener);
         this.digitsDetectorData = new Detector(context, "digitsDetectionData.tflite",
                 Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."), dataDigitsListener);
-        this.digitsDetectorId = new Detector(context, "digitsDetectionData.tflite",
-                Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."), idDigitsListener);
+        this.digitsDetectorId = new Detector(context, "digitsDetectionId.tflite",
+                Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"), idDigitsListener);
 
     }
 
@@ -102,12 +103,12 @@ public class ImageAnalyzer {
             }
         }
         if (maxCondId != 0f) {
-            this.cropId = toGrayscale(cropBitmap(originalBitmap, bestIdBox,false));
+            this.cropId = addPaddingToBitmap(toGrayscale(cropBitmap(originalBitmap, bestIdBox,false)));
             saveBitmapToGallery(cropId,this.context);
             this.digitsDetectorId.detect(cropId);
         }
         if (maxCondData != 0f) {
-            this.cropData = toGrayscale(cropBitmap(originalBitmap, bestDataBox,false));
+            this.cropData = addPaddingToBitmap(toGrayscale(cropBitmap(originalBitmap, bestDataBox,false)));
             saveBitmapToGallery(cropData,this.context);
             this.digitsDetectorData.detect(cropData);
         }
@@ -116,14 +117,11 @@ public class ImageAnalyzer {
     public void createStringFromDetection(List<BoundingBox> boundingBoxes, String type) {
         boundingBoxes.sort((b1, b2) -> Float.compare(b1.getX1(), b2.getX1()));
         StringBuilder classNames = new StringBuilder();
-
-        // Select the correct cropped bitmap based on type
         Bitmap cropBitmap = type.equals("data") ? cropData : cropId;
 
         for (BoundingBox box : boundingBoxes) {
             classNames.append(box.getClsName());
 
-            // Calculate crop coordinates based on the correct source bitmap
             RectF digitRect = new RectF(
                     box.getX1() * cropBitmap.getWidth(),
                     box.getY1() * cropBitmap.getHeight(),
@@ -131,21 +129,12 @@ public class ImageAnalyzer {
                     box.getY2() * cropBitmap.getHeight()
             );
 
-            // Add padding around the digit to provide more context
-            float padding = digitRect.width() * 0.1f; // 10% padding
-            digitRect.left = Math.max(0, digitRect.left - padding);
-            digitRect.top = Math.max(0, digitRect.top - padding);
-            digitRect.right = Math.min(cropBitmap.getWidth(), digitRect.right + padding);
-            digitRect.bottom = Math.min(cropBitmap.getHeight(), digitRect.bottom + padding);
-
             Bitmap digitCrop = cropBitmap(cropBitmap, digitRect, true);
             if (type.equals("data")) {
                 this.data = classNames.toString();
             } else {
                 this.id = classNames.toString();
             }
-
-            // Optional: Save for debugging
             saveBitmapToGallery(digitCrop, this.context);
         }
     }
