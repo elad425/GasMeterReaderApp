@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">gasMeterReader</string>
+    <string name="no_detection">no detection</string>
+</resources>
