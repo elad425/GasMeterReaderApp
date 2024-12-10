@@ -1,4 +1,4 @@
-package com.example.gasmeterreader;
+package com.example.gasmeterreader.ml;
 
 import static com.example.gasmeterreader.utils.StringsUtils.addString;
 import static com.example.gasmeterreader.utils.StringsUtils.getMaxCount;
@@ -26,7 +26,7 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.example.gasmeterreader.ml.ImageAnalyzer;
+import com.example.gasmeterreader.R;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.HashMap;
@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CameraLiveFeed {
+public class LiveStreamDetection {
     private final Context context;
     private final PreviewView previewView;
     private final ExecutorService cameraExecutor;
@@ -50,11 +50,11 @@ public class CameraLiveFeed {
     private final int detectionThreshold;
     private Boolean isDetected;
 
-    public CameraLiveFeed(Context context, PreviewView previewView,
-                          ImageButton flashButton,
-                          TextView idResultText,
-                          TextView dataResultText,
-                          ImageView detectionStatusIcon) {
+    public LiveStreamDetection(Context context, PreviewView previewView,
+                               ImageButton flashButton,
+                               TextView idResultText,
+                               TextView dataResultText,
+                               ImageView detectionStatusIcon) {
         this.context = context;
         this.previewView = previewView;
         this.flashButton = flashButton;

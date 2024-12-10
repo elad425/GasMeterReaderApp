@@ -9,13 +9,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.gasmeterreader.ml.LiveStreamDetection;
+
 public class LiveFeedActivity extends AppCompatActivity {
     private PreviewView previewView;
     private ImageButton flashButton;
     private TextView idResultText;
     private TextView dataResultText;
     private ImageView detectionStatusIcon;
-    private CameraLiveFeed cameraLiveFeed;
+    private LiveStreamDetection cameraLiveFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class LiveFeedActivity extends AppCompatActivity {
     }
 
     private void startCamera() {
-        this.cameraLiveFeed = new CameraLiveFeed(this, previewView,
+        this.cameraLiveFeed = new LiveStreamDetection(this, previewView,
                 flashButton, idResultText, dataResultText, detectionStatusIcon);
         cameraLiveFeed.startCamera();
     }
