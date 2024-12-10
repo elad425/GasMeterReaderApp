@@ -33,8 +33,11 @@ public class BitmapUtils {
             return null;
         }
 
+//        left = Math.max(left - 50, 0);
+//        width = Math.min(width + 100, original.getWidth());
+
         try {
-            Bitmap bitmap = Bitmap.createBitmap(original, left - 10, top, width + 20, height);
+            Bitmap bitmap = Bitmap.createBitmap(original, left, top, width, height);
             if (isDigit) {
                 return Bitmap.createScaledBitmap(bitmap, 320, 320, true);
             } else {
@@ -73,27 +76,18 @@ public class BitmapUtils {
         if(originalBitmap == null){
             return null;
         }
-
-        // Desired dimensions
         int newWidth = 1000;
         int newHeight = 3000;
 
-        // Create a new bitmap with the desired size
         Bitmap paddedBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
-
-        // Create a canvas to draw on the new bitmap
         Canvas canvas = new Canvas(paddedBitmap);
-
         canvas.drawColor(Color.GRAY);
 
-        // Calculate the top position to center the original bitmap vertically
         int height = (newHeight - originalBitmap.getHeight()) / 2;
         int width = (newWidth - originalBitmap.getWidth()) / 2;
 
-        // Draw the original bitmap onto the canvas
         canvas.drawBitmap(originalBitmap, width, height, null);
 
-        // Return the new padded bitmap
         return paddedBitmap;
     }
 
@@ -133,30 +127,19 @@ public class BitmapUtils {
                 Bitmap.Config.ARGB_8888
         );
 
-        // Iterate through each pixel and convert it to grayscale
         for (int x = 0; x < originalBitmap.getWidth(); x++) {
             for (int y = 0; y < originalBitmap.getHeight(); y++) {
-                // Get the color of the current pixel
                 int pixelColor = originalBitmap.getPixel(x, y);
-
-                // Extract the RGB components
                 int red = Color.red(pixelColor);
                 int green = Color.green(pixelColor);
                 int blue = Color.blue(pixelColor);
-
-                // Calculate the grayscale value using the luminance formula
                 int gray = (int) (0.3 * red + 0.59 * green + 0.11 * blue);
-
-                // Set the new grayscale color to the pixel
                 int newColor = Color.rgb(gray, gray, gray);
                 grayscaleBitmap.setPixel(x, y, newColor);
             }
         }
-
         return grayscaleBitmap;
     }
-
-
 }
 
 

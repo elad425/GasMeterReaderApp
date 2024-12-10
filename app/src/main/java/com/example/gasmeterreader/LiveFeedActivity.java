@@ -45,6 +45,5 @@ public class LiveFeedActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.cameraLiveFeed.close();
     }
 }

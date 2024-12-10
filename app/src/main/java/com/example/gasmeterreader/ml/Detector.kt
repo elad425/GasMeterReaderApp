@@ -83,9 +83,7 @@ class Detector(
         if (numElements == 0) return
 
         var inferenceTime = SystemClock.uptimeMillis()
-
         val resizedBitmap = Bitmap.createScaledBitmap(frame, tensorWidth, tensorHeight, false)
-
         val tensorImage = TensorImage(INPUT_IMAGE_TYPE)
         tensorImage.load(resizedBitmap)
         val processedImage = imageProcessor.process(tensorImage)
@@ -148,7 +146,6 @@ class Detector(
         }
 
         if (boundingBoxes.isEmpty()) return null
-
         return applyNMS(boundingBoxes)
     }
 
@@ -195,7 +192,7 @@ class Detector(
         private const val INPUT_STANDARD_DEVIATION = 255f
         private val INPUT_IMAGE_TYPE = DataType.FLOAT32
         private val OUTPUT_IMAGE_TYPE = DataType.FLOAT32
-        private const val CONFIDENCE_THRESHOLD = 0.4F
+        private const val CONFIDENCE_THRESHOLD = 0.35F
         private const val IOU_THRESHOLD = 0.4F
     }
 }

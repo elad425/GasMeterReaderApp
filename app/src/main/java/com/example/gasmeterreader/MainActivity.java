@@ -111,25 +111,19 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             Bitmap imageBitmap = null;
-
             if (requestCode == CAMERA_CAPTURE_REQUEST_CODE) {
                 try {
                     imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
-                    imageBitmap = rotateImageIfRequired(this,imageBitmap, photoUri); // Adjust rotation
-                } catch (IOException e) {
-                    Toast.makeText(this, "Error loading full-resolution image", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                    imageBitmap = rotateImageIfRequired(this,imageBitmap, photoUri);
+                } catch (IOException ignored) {}
             } else if (requestCode == GALLERY_PICK_REQUEST_CODE) {
                 if (data != null) {
                     Uri selectedImageUri = data.getData();
                     try {
                         imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
                                 selectedImageUri);
-                        imageBitmap = rotateImageIfRequired(this,imageBitmap,
-                                selectedImageUri);
-                    } catch (IOException ignored) {
-                    }
+                        imageBitmap = rotateImageIfRequired(this,imageBitmap, selectedImageUri);
+                    } catch (IOException ignored) {}
                 }
             }
 
