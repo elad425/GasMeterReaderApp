@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void update(){
         this.dataResult.setText(String.format("data: %s", imageAnalyzer.getData()));
-        this.idResult.setText(String.format("id: %s", imageAnalyzer.getId()));
+        this.idResult.setText(String.format("serial: %s", imageAnalyzer.getId()));
     }
 
 }

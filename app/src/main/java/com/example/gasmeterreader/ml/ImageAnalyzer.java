@@ -1,8 +1,8 @@
 package com.example.gasmeterreader.ml;
 
-import static com.example.gasmeterreader.utils.BitmapUtils.addPaddingToBitmap;
 import static com.example.gasmeterreader.utils.BitmapUtils.cropBitmap;
-import static com.example.gasmeterreader.utils.BitmapUtils.toGrayscale;
+import static com.example.gasmeterreader.utils.BitmapUtils.mapToOriginalImage;
+import static com.example.gasmeterreader.utils.BitmapUtils.placeOnGrayCanvas;
 import static com.example.gasmeterreader.utils.StringsUtils.fixID;
 
 import android.content.Context;
@@ -22,12 +22,16 @@ public class ImageAnalyzer {
     private final Detector digitsDetectorData;
     private final Detector digitsDetectorId;
     private Bitmap originalBitmap;
+    private Bitmap geryBackImage;
+    private Context context;
 
     public ImageAnalyzer(Context context){
-
+        this.context = context;
         Detector.DetectorListener boxListener = new Detector.DetectorListener() {
             @Override
             public void onEmptyDetect() {
+                onEmptyDataDetect();
+                onEmptyIdDetect();
             }
 
             @Override
@@ -39,6 +43,7 @@ public class ImageAnalyzer {
         Detector.DetectorListener dataDigitsListener = new Detector.DetectorListener() {
             @Override
             public void onEmptyDetect() {
+                onEmptyDataDetect();
             }
 
             @Override
@@ -50,6 +55,7 @@ public class ImageAnalyzer {
         Detector.DetectorListener idDigitsListener = new Detector.DetectorListener() {
             @Override
             public void onEmptyDetect() {
+                onEmptyIdDetect();
             }
 
             @Override
@@ -67,9 +73,18 @@ public class ImageAnalyzer {
 
     }
 
+    public void onEmptyIdDetect(){
+        this.id = "";
+    }
+
+    public void onEmptyDataDetect(){
+        this.data = "";
+    }
+
     public void detect(Bitmap bitmap){
         this.originalBitmap = bitmap;
-        this.boxDetector.detect(this.originalBitmap);
+        this.geryBackImage = placeOnGrayCanvas(bitmap);
+        this.boxDetector.detect(this.geryBackImage);
     }
 
     public void cropOriginalBitmap(List<BoundingBox> boundingBoxes){
@@ -81,29 +96,29 @@ public class ImageAnalyzer {
             if(b.getClsName().equals("id")) {
                 if (b.getCnf() > maxCondId){
                     maxCondId = b.getCnf();
-                    bestIdBox = new RectF(b.getX1() * this.originalBitmap.getWidth(),
-                            b.getY1() * this.originalBitmap.getHeight(),
-                            b.getX2() * this.originalBitmap.getWidth(),
-                            b.getY2()* this.originalBitmap.getHeight());
+                    bestIdBox = new RectF(b.getX1() * this.geryBackImage.getWidth(),
+                            b.getY1() * this.geryBackImage.getHeight(),
+                            b.getX2() * this.geryBackImage.getWidth(),
+                            b.getY2()* this.geryBackImage.getHeight());
                 }
             }
             if(b.getClsName().equals("data")) {
                 if (b.getCnf() > maxCondData){
                     maxCondData = b.getCnf();
-                    bestDataBox = new RectF(b.getX1() * this.originalBitmap.getWidth(),
-                            b.getY1() * this.originalBitmap.getHeight(),
-                            b.getX2() * this.originalBitmap.getWidth(),
-                            b.getY2()* this.originalBitmap.getHeight());
+                    bestDataBox = new RectF(b.getX1() * this.geryBackImage.getWidth(),
+                            b.getY1() * this.geryBackImage.getHeight(),
+                            b.getX2() * this.geryBackImage.getWidth(),
+                            b.getY2()* this.geryBackImage.getHeight());
                 }
             }
         }
         if (maxCondId != 0f) {
-            this.digitsDetectorId.detect(Objects.requireNonNull(addPaddingToBitmap(
-                    toGrayscale(cropBitmap(originalBitmap, bestIdBox)))));
+            this.digitsDetectorId.detect(Objects.requireNonNull(cropBitmap(originalBitmap,
+                    mapToOriginalImage(bestIdBox, originalBitmap.getWidth(),originalBitmap.getHeight()))));
         }
         if (maxCondData != 0f) {
-            this.digitsDetectorData.detect(Objects.requireNonNull(addPaddingToBitmap(
-                    toGrayscale(cropBitmap(originalBitmap, bestDataBox)))));
+            this.digitsDetectorData.detect(Objects.requireNonNull(cropBitmap(originalBitmap,
+                    mapToOriginalImage(bestDataBox, originalBitmap.getWidth(),originalBitmap.getHeight()))));
         }
     }
 

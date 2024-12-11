@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.Log;
 
 import androidx.exifinterface.media.ExifInterface;
 
@@ -29,27 +30,8 @@ public class BitmapUtils {
         int top = Math.max(0, Math.round(boundingBox.top));
         int width = Math.min(original.getWidth() - left, Math.round(boundingBox.width()));
         int height = Math.min(original.getHeight() - top, Math.round(boundingBox.height()));
-        int buffer = width / 5;
-        int ratio;
 
-        if (width <= 0 || height <= 0 || left >= original.getWidth() || top >= original.getHeight()) {
-            return null;
-        }
-
-        left = Math.max(left - buffer,0);
-        width = Math.min(width + (buffer * 2), original.getWidth());
-
-        if (width > IMAGE_SIZE){
-            ratio = width / IMAGE_SIZE;
-        } else{
-            ratio = IMAGE_SIZE / width;
-        }
-
-        if(left + width > original.getWidth()){
-            width = original.getWidth() - left;
-        }
-        return Bitmap.createScaledBitmap(Bitmap.createBitmap(original, left, top, width, height),
-                width * ratio, height * ratio,true);
+        return placeOnGrayCanvas(Bitmap.createBitmap(original, left, top, width, height));
     }
 
     public static void saveBitmapToGallery(Bitmap bitmap, Context context) {
@@ -74,24 +56,28 @@ public class BitmapUtils {
         }
     }
 
-    public static Bitmap addPaddingToBitmap(Bitmap originalBitmap) {
+    public static Bitmap placeOnGrayCanvas(Bitmap originalBitmap) {
 
-        if(originalBitmap == null){
-            return null;
-        }
-        int newWidth = IMAGE_SIZE;
-        int newHeight = IMAGE_SIZE;
+        int canvasWidth = 640;
+        int canvasHeight = 640;
 
-        Bitmap paddedBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(paddedBitmap);
+        Bitmap canvasBitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(canvasBitmap);
         canvas.drawColor(Color.GRAY);
 
-        int height = (newHeight - originalBitmap.getHeight()) / 2;
-        int width = (newWidth - originalBitmap.getWidth()) / 2;
+        int originalWidth = originalBitmap.getWidth();
+        int originalHeight = originalBitmap.getHeight();
+        float scale = Math.min((float) canvasWidth / originalWidth, (float) canvasHeight / originalHeight);
+        int newWidth = Math.round(originalWidth * scale);
+        int newHeight = Math.round(originalHeight * scale);
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, true);
 
-        canvas.drawBitmap(originalBitmap, width, height, null);
+        int left = (canvasWidth - newWidth) / 2;
+        int top = (canvasHeight - newHeight) / 2;
 
-        return paddedBitmap;
+        canvas.drawBitmap(resizedBitmap, left, top, null);
+
+        return toGrayscale(canvasBitmap);
     }
 
     public static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
@@ -121,7 +107,7 @@ public class BitmapUtils {
 
 
     public static Bitmap toGrayscale(Bitmap originalBitmap) {
-        if(originalBitmap == null){
+        if (originalBitmap == null) {
             return null;
         }
         Bitmap grayscaleBitmap = Bitmap.createBitmap(
@@ -130,18 +116,39 @@ public class BitmapUtils {
                 Bitmap.Config.ARGB_8888
         );
 
+        int brightnessOffset = 20;
+
         for (int x = 0; x < originalBitmap.getWidth(); x++) {
             for (int y = 0; y < originalBitmap.getHeight(); y++) {
                 int pixelColor = originalBitmap.getPixel(x, y);
                 int red = Color.red(pixelColor);
                 int green = Color.green(pixelColor);
                 int blue = Color.blue(pixelColor);
-                int gray = (int) (0.3 * red + 0.59 * green + 0.11 * blue);
+                int gray = Math.min(255,
+                        (int) ((0.3 * red + 0.59 * green + 0.11 * blue) + brightnessOffset));
                 int newColor = Color.rgb(gray, gray, gray);
                 grayscaleBitmap.setPixel(x, y, newColor);
             }
         }
         return grayscaleBitmap;
+    }
+
+
+    public static RectF mapToOriginalImage(RectF rectF, int originalWidth, int originalHeight) {
+        float scale = Math.min((float) IMAGE_SIZE / originalWidth, (float) IMAGE_SIZE / originalHeight);
+
+        float newWidth = originalWidth * scale;
+        float newHeight = originalHeight * scale;
+        float leftPadding = (IMAGE_SIZE - newWidth) / 2.0f;
+        float topPadding = (IMAGE_SIZE - newHeight) / 2.0f;
+        float x1 = (rectF.left - leftPadding) / scale;
+        float y1 = (rectF.top - topPadding) / scale;
+        float x2 = (rectF.right - leftPadding) / scale;
+        float y2 = (rectF.bottom - topPadding) / scale;
+
+        Log.d("elad",new RectF(x1, y1, x2, y2).toString());
+
+        return new RectF(x1, y1, x2, y2);
     }
 }
 
