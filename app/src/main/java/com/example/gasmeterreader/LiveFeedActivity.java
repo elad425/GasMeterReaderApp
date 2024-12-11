@@ -17,7 +17,6 @@ public class LiveFeedActivity extends AppCompatActivity {
     private TextView idResultText;
     private TextView dataResultText;
     private ImageView detectionStatusIcon;
-    private LiveStreamDetection cameraLiveFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +36,7 @@ public class LiveFeedActivity extends AppCompatActivity {
     }
 
     private void startCamera() {
-        this.cameraLiveFeed = new LiveStreamDetection(this, previewView,
+        LiveStreamDetection cameraLiveFeed = new LiveStreamDetection(this, previewView,
                 flashButton, idResultText, dataResultText, detectionStatusIcon);
         cameraLiveFeed.startCamera();
     }

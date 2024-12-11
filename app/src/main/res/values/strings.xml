@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">gasMeterReader</string>
-    <string name="no_detection">no detection</string>
+    <string name="data_not_detected">Data: not detected</string>
+    <string name="serial_not_detected">Serial: not detected</string>
 </resources>

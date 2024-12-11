@@ -65,10 +65,10 @@ public class LiveStreamDetection {
         this.detectionStatusIcon = detectionStatusIcon;
         this.cameraExecutor = Executors.newSingleThreadExecutor();
         this.imageAnalyzer = new ImageAnalyzer(this.context);
-        this.detectionThreshold = 2;
+        this.detectionThreshold = 3;
         this.isDetected = false;
-        this.dataResultText.setText(R.string.no_detection);
-        this.idResultText.setText(R.string.no_detection);
+        this.dataResultText.setText(R.string.data_not_detected);
+        this.idResultText.setText(R.string.serial_not_detected);
         setupFlashButton();
     }
 
@@ -90,7 +90,7 @@ public class LiveStreamDetection {
             detectionStatusIcon.setImageResource(
                     isDetected ? R.drawable.ic_green_check : R.drawable.ic_red_x);
             dataResultText.setText(String.format("Data: %s", getMostFrequentString(detectionCounterData)));
-            idResultText.setText(String.format("ID: %s", getMostFrequentString(detectionCounterID)));
+            idResultText.setText(String.format("Serial: %s", getMostFrequentString(detectionCounterID)));
             if (isDetected) {
                 Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 if (vibrator != null && vibrator.hasVibrator()) {

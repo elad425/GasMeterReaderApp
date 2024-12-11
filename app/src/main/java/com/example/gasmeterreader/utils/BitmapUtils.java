@@ -45,6 +45,9 @@ public class BitmapUtils {
             ratio = IMAGE_SIZE / width;
         }
 
+        if(left + width > original.getWidth()){
+            width = original.getWidth() - left;
+        }
         return Bitmap.createScaledBitmap(Bitmap.createBitmap(original, left, top, width, height),
                 width * ratio, height * ratio,true);
     }
