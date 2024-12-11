@@ -41,8 +41,7 @@ public class StringsUtils {
     }
 
     public static String fixID(String input) {
-        input = input.replaceAll("^0+", "");
-        int hyphenIndex = input.indexOf('-');
+        int hyphenIndex = input.indexOf('e');
         if (hyphenIndex != -1) {
             return input.substring(hyphenIndex + 1);
         }

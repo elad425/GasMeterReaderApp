@@ -3,6 +3,7 @@ package com.example.gasmeterreader.ml;
 import static com.example.gasmeterreader.utils.BitmapUtils.addPaddingToBitmap;
 import static com.example.gasmeterreader.utils.BitmapUtils.cropBitmap;
 import static com.example.gasmeterreader.utils.BitmapUtils.toGrayscale;
+import static com.example.gasmeterreader.utils.StringsUtils.fixID;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -61,8 +62,8 @@ public class ImageAnalyzer {
                 Arrays.asList("id", "data"), boxListener);
         this.digitsDetectorData = new Detector(context, "digitsDetectionData.tflite",
                 Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."), dataDigitsListener);
-        this.digitsDetectorId = new Detector(context, "digitsDetectionData.tflite",
-                Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"), idDigitsListener);
+        this.digitsDetectorId = new Detector(context, "digitsDetectionId.tflite",
+                Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "line"), idDigitsListener);
 
     }
 
@@ -114,7 +115,7 @@ public class ImageAnalyzer {
             if (type.equals("data")) {
                 this.data = classNames.toString();
             } else {
-                this.id = classNames.toString();
+                this.id = fixID(classNames.toString());
             }
         }
     }

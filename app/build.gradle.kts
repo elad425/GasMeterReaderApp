@@ -36,6 +36,11 @@ android {
     buildFeatures {
         mlModelBinding = true
     }
+    packaging {
+        resources {
+            excludes += "tflite"
+        }
+    }
 }
 
 dependencies {
