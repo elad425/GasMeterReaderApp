@@ -98,11 +98,11 @@ public class ImageAnalyzer {
         }
         if (maxCondId != 0f) {
             this.digitsDetectorId.detect(Objects.requireNonNull(addPaddingToBitmap(
-                    toGrayscale(cropBitmap(originalBitmap, bestIdBox, false)))));
+                    toGrayscale(cropBitmap(originalBitmap, bestIdBox)))));
         }
         if (maxCondData != 0f) {
             this.digitsDetectorData.detect(Objects.requireNonNull(addPaddingToBitmap(
-                    toGrayscale(cropBitmap(originalBitmap, bestDataBox, false)))));
+                    toGrayscale(cropBitmap(originalBitmap, bestDataBox)))));
         }
     }
 

@@ -22,31 +22,31 @@ import java.util.Date;
 import java.util.Locale;
 
 public class BitmapUtils {
+    private static final int IMAGE_SIZE = 640;
 
-    public static Bitmap cropBitmap(Bitmap original, RectF boundingBox,Boolean isDigit) {
+    public static Bitmap cropBitmap(Bitmap original, RectF boundingBox) {
         int left = Math.max(0, Math.round(boundingBox.left));
         int top = Math.max(0, Math.round(boundingBox.top));
         int width = Math.min(original.getWidth() - left, Math.round(boundingBox.width()));
         int height = Math.min(original.getHeight() - top, Math.round(boundingBox.height()));
+        int buffer = width / 5;
+        int ratio;
 
         if (width <= 0 || height <= 0 || left >= original.getWidth() || top >= original.getHeight()) {
             return null;
         }
 
-//        left = Math.max(left - 50, 0);
-//        width = Math.min(width + 100, original.getWidth());
+        left = Math.max(left - buffer,0);
+        width = Math.min(width + (buffer * 2), original.getWidth());
 
-        try {
-            Bitmap bitmap = Bitmap.createBitmap(original, left, top, width, height);
-            if (isDigit) {
-                return Bitmap.createScaledBitmap(bitmap, 320, 320, true);
-            } else {
-                return Bitmap.createScaledBitmap(bitmap, 1000, 500, true);
-
-            }
-        } catch (IllegalArgumentException e) {
-            return null;
+        if (width > IMAGE_SIZE){
+            ratio = width / IMAGE_SIZE;
+        } else{
+            ratio = IMAGE_SIZE / width;
         }
+
+        return Bitmap.createScaledBitmap(Bitmap.createBitmap(original, left, top, width, height),
+                width * ratio, height * ratio,true);
     }
 
     public static void saveBitmapToGallery(Bitmap bitmap, Context context) {
@@ -76,8 +76,8 @@ public class BitmapUtils {
         if(originalBitmap == null){
             return null;
         }
-        int newWidth = 1000;
-        int newHeight = 3000;
+        int newWidth = IMAGE_SIZE;
+        int newHeight = IMAGE_SIZE;
 
         Bitmap paddedBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(paddedBitmap);
