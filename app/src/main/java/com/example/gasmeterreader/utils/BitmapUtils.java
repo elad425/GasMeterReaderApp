@@ -4,14 +4,16 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.util.Log;
 
 import androidx.exifinterface.media.ExifInterface;
 
@@ -77,7 +79,7 @@ public class BitmapUtils {
 
         canvas.drawBitmap(resizedBitmap, left, top, null);
 
-        return toGrayscale(canvasBitmap);
+        return convertToGrayscale(canvasBitmap);
     }
 
     public static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
@@ -105,32 +107,15 @@ public class BitmapUtils {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
-
-    public static Bitmap toGrayscale(Bitmap originalBitmap) {
-        if (originalBitmap == null) {
-            return null;
-        }
-        Bitmap grayscaleBitmap = Bitmap.createBitmap(
-                originalBitmap.getWidth(),
-                originalBitmap.getHeight(),
-                Bitmap.Config.ARGB_8888
-        );
-
-        int brightnessOffset = 20;
-
-        for (int x = 0; x < originalBitmap.getWidth(); x++) {
-            for (int y = 0; y < originalBitmap.getHeight(); y++) {
-                int pixelColor = originalBitmap.getPixel(x, y);
-                int red = Color.red(pixelColor);
-                int green = Color.green(pixelColor);
-                int blue = Color.blue(pixelColor);
-                int gray = Math.min(255,
-                        (int) ((0.3 * red + 0.59 * green + 0.11 * blue) + brightnessOffset));
-                int newColor = Color.rgb(gray, gray, gray);
-                grayscaleBitmap.setPixel(x, y, newColor);
-            }
-        }
-        return grayscaleBitmap;
+    private static Bitmap convertToGrayscale(Bitmap original) {
+        Bitmap grayscale = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(grayscale);
+        ColorMatrix colorMatrix = new ColorMatrix();
+        colorMatrix.setSaturation(0);
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+        canvas.drawBitmap(original, 0, 0, paint);
+        return grayscale;
     }
 
 
@@ -145,8 +130,6 @@ public class BitmapUtils {
         float y1 = (rectF.top - topPadding) / scale;
         float x2 = (rectF.right - leftPadding) / scale;
         float y2 = (rectF.bottom - topPadding) / scale;
-
-        Log.d("elad",new RectF(x1, y1, x2, y2).toString());
 
         return new RectF(x1, y1, x2, y2);
     }
