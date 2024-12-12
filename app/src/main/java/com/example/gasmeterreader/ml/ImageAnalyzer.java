@@ -1,5 +1,6 @@
 package com.example.gasmeterreader.ml;
 
+import static com.example.gasmeterreader.utils.BitmapUtils.convertToGrayscale;
 import static com.example.gasmeterreader.utils.BitmapUtils.cropBitmap;
 import static com.example.gasmeterreader.utils.BitmapUtils.mapToOriginalImage;
 import static com.example.gasmeterreader.utils.BitmapUtils.placeOnGrayCanvas;
@@ -82,7 +83,7 @@ public class ImageAnalyzer {
 
     public void detect(Bitmap bitmap){
         this.originalBitmap = bitmap;
-        this.geryBackImage = placeOnGrayCanvas(bitmap);
+        this.geryBackImage = placeOnGrayCanvas(convertToGrayscale(bitmap));
         this.boxDetector.detect(this.geryBackImage);
     }
 

@@ -78,8 +78,7 @@ public class BitmapUtils {
         int top = (canvasHeight - newHeight) / 2;
 
         canvas.drawBitmap(resizedBitmap, left, top, null);
-
-        return convertToGrayscale(canvasBitmap);
+        return canvasBitmap;
     }
 
     public static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
@@ -107,7 +106,7 @@ public class BitmapUtils {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
-    private static Bitmap convertToGrayscale(Bitmap original) {
+    public static Bitmap convertToGrayscale(Bitmap original) {
         Bitmap grayscale = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(grayscale);
         ColorMatrix colorMatrix = new ColorMatrix();
