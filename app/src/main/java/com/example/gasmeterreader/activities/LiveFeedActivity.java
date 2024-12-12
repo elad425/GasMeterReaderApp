@@ -1,4 +1,4 @@
-package com.example.gasmeterreader;
+package com.example.gasmeterreader.activities;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -25,6 +25,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
+import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.ml.ImageAnalyzer;
 import com.google.common.util.concurrent.ListenableFuture;
 

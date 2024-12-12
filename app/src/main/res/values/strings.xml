@@ -1,5 +1,11 @@
 <resources>
-    <string name="app_name">gasMeterReader</string>
+    <string name="app_name">Gasnap</string>
     <string name="data_not_detected">Data: not detected</string>
     <string name="serial_not_detected">Serial: not detected</string>
+    <string name="serial">serial:</string>
+    <string name="id">id:</string>
+    <string name="gallery">gallery</string>
+    <string name="open_camera">open camera</string>
+    <string name="open_live_stream">open live stream</string>
+    <string name="data">data:</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.gasmeterreader;
+package com.example.gasmeterreader.activities;
 
 import static com.example.gasmeterreader.utils.BitmapUtils.rotateImageIfRequired;
 
@@ -19,9 +19,11 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.ml.ImageAnalyzer;
 
 import java.io.File;
@@ -61,13 +63,13 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        Button liveFeedButton = findViewById(R.id.liveFeedButton);
+        ImageButton liveFeedButton = findViewById(R.id.liveFeedButton);
         liveFeedButton.setOnClickListener(v -> checkAndRequestCameraPermission(true));
 
-        Button captureButton = findViewById(R.id.camera);
+        ImageButton captureButton = findViewById(R.id.camera);
         captureButton.setOnClickListener(v -> checkAndRequestCameraPermission(false));
 
-        Button galleryButton = findViewById(R.id.gallery);
+        ImageButton galleryButton = findViewById(R.id.gallery);
         galleryButton.setOnClickListener(v -> openGallery());
 
     }
