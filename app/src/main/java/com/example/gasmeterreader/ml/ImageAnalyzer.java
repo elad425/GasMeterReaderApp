@@ -82,8 +82,8 @@ public class ImageAnalyzer {
     }
 
     public void detect(Bitmap bitmap){
-        this.originalBitmap = bitmap;
-        this.geryBackImage = placeOnGrayCanvas(convertToGrayscale(bitmap));
+        this.originalBitmap = convertToGrayscale(bitmap);
+        this.geryBackImage = placeOnGrayCanvas(this.originalBitmap);
         this.boxDetector.detect(this.geryBackImage);
     }
 

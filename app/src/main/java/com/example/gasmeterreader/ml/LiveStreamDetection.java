@@ -65,7 +65,7 @@ public class LiveStreamDetection {
         this.detectionStatusIcon = detectionStatusIcon;
         this.cameraExecutor = Executors.newSingleThreadExecutor();
         this.imageAnalyzer = new ImageAnalyzer(this.context);
-        this.detectionThreshold = 2;
+        this.detectionThreshold = 3;
         this.isDetected = false;
         this.dataResultText.setText(R.string.data_not_detected);
         this.idResultText.setText(R.string.serial_not_detected);
