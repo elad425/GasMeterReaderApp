@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class ImageAnalyzer {
     private String data = "";
@@ -65,7 +64,7 @@ public class ImageAnalyzer {
         };
 
         this.boxDetector = new Detector(context,"boxDetection.tflite",
-                Arrays.asList("id", "data"), boxListener);
+                Arrays.asList("data", "id"), boxListener);
         this.digitsDetectorData = new Detector(context, "digitsDetectionData.tflite",
                 Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."), dataDigitsListener);
         this.digitsDetectorId = new Detector(context, "digitsDetectionId.tflite",
@@ -113,12 +112,14 @@ public class ImageAnalyzer {
             }
         }
         if (maxCondId != 0f) {
-            this.digitsDetectorId.detect(Objects.requireNonNull(cropBitmap(originalBitmap,
-                    mapToOriginalImage(bestIdBox, originalBitmap.getWidth(),originalBitmap.getHeight()))));
+            Bitmap resultId = cropBitmap(originalBitmap,
+                    mapToOriginalImage(bestIdBox, originalBitmap.getWidth(), originalBitmap.getHeight()));
+            this.digitsDetectorId.detect(resultId);
         }
         if (maxCondData != 0f) {
-            this.digitsDetectorData.detect(Objects.requireNonNull(cropBitmap(originalBitmap,
-                    mapToOriginalImage(bestDataBox, originalBitmap.getWidth(),originalBitmap.getHeight()))));
+            Bitmap resultData = cropBitmap(originalBitmap,
+                    mapToOriginalImage(bestDataBox, originalBitmap.getWidth(), originalBitmap.getHeight()));
+            this.digitsDetectorData.detect(resultData);
         }
     }
 
