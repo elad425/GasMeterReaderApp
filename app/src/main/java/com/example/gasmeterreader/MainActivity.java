@@ -44,10 +44,9 @@ public class MainActivity extends AppCompatActivity {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
 
-        this.imageAnalyzer = new ImageAnalyzer(this);
-
-        this.idResult = findViewById(R.id.idResultText);
-        this.dataResult = findViewById(R.id.dataResultText);
+        imageAnalyzer = new ImageAnalyzer(this);
+        idResult = findViewById(R.id.idResultText);
+        dataResult = findViewById(R.id.dataResultText);
 
         requestPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (imageBitmap != null) {
                 try {
-                    this.imageAnalyzer.detect(imageBitmap);
+                    imageAnalyzer.detect(imageBitmap);
                 } finally {
                     File photoFile = new File(getExternalFilesDir(null),
                             "captured_image.jpg");
@@ -143,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void update(){
-        this.dataResult.setText(String.format("data: %s", imageAnalyzer.getData()));
-        this.idResult.setText(String.format("serial: %s", imageAnalyzer.getId()));
+        dataResult.setText(String.format("data: %s", imageAnalyzer.getData()));
+        idResult.setText(String.format("serial: %s", imageAnalyzer.getId()));
     }
 
 }
