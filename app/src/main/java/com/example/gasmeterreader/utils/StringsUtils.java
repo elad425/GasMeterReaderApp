@@ -47,4 +47,11 @@ public class StringsUtils {
         }
         return input;
     }
+
+    public static String fixData(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replace("dot", ".");
+    }
 }

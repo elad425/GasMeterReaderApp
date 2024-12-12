@@ -4,6 +4,7 @@ import static com.example.gasmeterreader.utils.BitmapUtils.convertToGrayscale;
 import static com.example.gasmeterreader.utils.BitmapUtils.cropBitmap;
 import static com.example.gasmeterreader.utils.BitmapUtils.mapToOriginalImage;
 import static com.example.gasmeterreader.utils.BitmapUtils.placeOnGrayCanvas;
+import static com.example.gasmeterreader.utils.StringsUtils.fixData;
 import static com.example.gasmeterreader.utils.StringsUtils.fixID;
 
 import android.content.Context;
@@ -67,7 +68,7 @@ public class ImageAnalyzer {
         this.boxDetector = new Detector(context,"boxDetection.tflite",
                 Arrays.asList("data", "id"), boxListener);
         this.digitsDetectorData = new Detector(context, "digitsDetectionData.tflite",
-                Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."), dataDigitsListener);
+                Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "dot"), dataDigitsListener);
         this.digitsDetectorId = new Detector(context, "digitsDetectionId.tflite",
                 Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "line"), idDigitsListener);
 
@@ -130,7 +131,7 @@ public class ImageAnalyzer {
         for (BoundingBox box : boundingBoxes) {
             classNames.append(box.getClsName());
             if (type.equals("data")) {
-                this.data = classNames.toString();
+                this.data = fixData(classNames.toString());
             } else {
                 this.id = fixID(classNames.toString());
             }
