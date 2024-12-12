@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ public class LiveStreamDetection {
     private final ImageButton flashButton;
     private final TextView idResultText;
     private final TextView dataResultText;
+    private final Button resetResult;
     private final ImageAnalyzer imageAnalyzer;
     private final ImageView detectionStatusIcon;
     private final HashMap<String, Integer> detectionCounterID;
@@ -54,12 +56,13 @@ public class LiveStreamDetection {
                                ImageButton flashButton,
                                TextView idResultText,
                                TextView dataResultText,
-                               ImageView detectionStatusIcon) {
+                               ImageView detectionStatusIcon,Button resetResult) {
         this.context = context;
         this.previewView = previewView;
         this.flashButton = flashButton;
         this.idResultText = idResultText;
         this.dataResultText = dataResultText;
+        this.resetResult = resetResult;
         this.detectionCounterID = new HashMap<>();
         this.detectionCounterData = new HashMap<>();
         this.detectionStatusIcon = detectionStatusIcon;
@@ -70,6 +73,7 @@ public class LiveStreamDetection {
         this.dataResultText.setText(R.string.data_not_detected);
         this.idResultText.setText(R.string.serial_not_detected);
         setupFlashButton();
+        setupResetResultButton();
     }
 
     private void updateResultTexts(final String idResult, final String dataResult) {
@@ -80,7 +84,8 @@ public class LiveStreamDetection {
             if (!dataResult.isEmpty()) {
                 addString(dataResult,detectionCounterData);
             }
-            this.isDetected = getMaxCount(detectionCounterData) >= detectionThreshold;
+            this.isDetected = getMaxCount(detectionCounterData) >= detectionThreshold &&
+                    getMaxCount(detectionCounterID) >= detectionThreshold;
             updateDetectionStatus();
         });
     }
@@ -104,6 +109,18 @@ public class LiveStreamDetection {
 
     private void setupFlashButton() {
         flashButton.setOnClickListener(v -> toggleFlash());
+    }
+
+    private void setupResetResultButton(){
+        resetResult.setOnClickListener(view -> ResetResult());
+    }
+
+    private void ResetResult(){
+        this.detectionCounterID.clear();
+        this.detectionCounterData.clear();
+        this.isDetected = false;
+        this.imageAnalyzer.deleteDataDetect();
+        this.imageAnalyzer.deleteIdDetect();
     }
 
     private void toggleFlash() {

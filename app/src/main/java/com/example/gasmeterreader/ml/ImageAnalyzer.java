@@ -30,8 +30,8 @@ public class ImageAnalyzer {
         Detector.DetectorListener boxListener = new Detector.DetectorListener() {
             @Override
             public void onEmptyDetect() {
-                onEmptyDataDetect();
-                onEmptyIdDetect();
+                deleteDataDetect();
+                deleteIdDetect();
             }
 
             @Override
@@ -43,7 +43,7 @@ public class ImageAnalyzer {
         Detector.DetectorListener dataDigitsListener = new Detector.DetectorListener() {
             @Override
             public void onEmptyDetect() {
-                onEmptyDataDetect();
+                deleteDataDetect();
             }
 
             @Override
@@ -55,7 +55,7 @@ public class ImageAnalyzer {
         Detector.DetectorListener idDigitsListener = new Detector.DetectorListener() {
             @Override
             public void onEmptyDetect() {
-                onEmptyIdDetect();
+                deleteIdDetect();
             }
 
             @Override
@@ -73,11 +73,11 @@ public class ImageAnalyzer {
 
     }
 
-    public void onEmptyIdDetect(){
+    public void deleteIdDetect(){
         this.id = "";
     }
 
-    public void onEmptyDataDetect(){
+    public void deleteDataDetect(){
         this.data = "";
     }
 
