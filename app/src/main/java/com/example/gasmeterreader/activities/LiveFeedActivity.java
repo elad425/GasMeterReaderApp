@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
@@ -24,19 +22,14 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.gasmeterreader.R;
-import com.example.gasmeterreader.ml.ImageAnalyzer;
+import com.example.gasmeterreader.viewModels.LiveFeedViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static com.example.gasmeterreader.utils.StringsUtils.addString;
-import static com.example.gasmeterreader.utils.StringsUtils.getMaxCount;
-import static com.example.gasmeterreader.utils.StringsUtils.getMostFrequentString;
 
 public class LiveFeedActivity extends AppCompatActivity {
     private PreviewView previewView;
@@ -46,30 +39,31 @@ public class LiveFeedActivity extends AppCompatActivity {
     private ImageView detectionStatusIcon;
 
     private Camera camera;
-    private boolean isFlashOn = false;
-    private final ExecutorService cameraExecutor;
-    private ImageAnalyzer imageAnalyzer;
-    private final HashMap<String, Integer> detectionCounterID;
-    private final HashMap<String, Integer> detectionCounterData;
-    private final int detectionThreshold;
-    private Boolean isDetected;
-
-    public LiveFeedActivity() {
-        this.cameraExecutor = Executors.newSingleThreadExecutor();
-        this.detectionCounterID = new HashMap<>();
-        this.detectionCounterData = new HashMap<>();
-        this.detectionThreshold = 3;
-        this.isDetected = false;
-    }
+    private LiveFeedViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_feed);
 
+        // Set status bar color
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
 
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(LiveFeedViewModel.class);
+
+        // Initialize UI elements
+        initializeViews();
+
+        // Setup observers
+        setupObservers();
+
+        // Start camera
+        startCamera();
+    }
+
+    private void initializeViews() {
         previewView = findViewById(R.id.viewFinder);
         flashButton = findViewById(R.id.flashButton);
         idResultText = findViewById(R.id.idResultText);
@@ -77,72 +71,58 @@ public class LiveFeedActivity extends AppCompatActivity {
         detectionStatusIcon = findViewById(R.id.detectionStatusIcon);
         Button resetResult = findViewById(R.id.reset);
 
-        this.imageAnalyzer = new ImageAnalyzer(this);
-        this.dataResultText.setText(R.string.data_not_detected);
-        this.idResultText.setText(R.string.serial_not_detected);
-
-        flashButton.setOnClickListener(v -> toggleFlash());
-        resetResult.setOnClickListener(view -> resetResult());
-        startCamera();
+        // Setup click listeners
+        flashButton.setOnClickListener(v -> viewModel.toggleFlash());
+        resetResult.setOnClickListener(view -> viewModel.resetResult());
     }
 
-    private void updateResultTexts(final String idResult, final String dataResult) {
-        new Handler(Looper.getMainLooper()).post(() -> {
-            if (!idResult.isEmpty()) {
-                addString(idResult, detectionCounterID);
+    private void setupObservers() {
+        // Observe detection icon
+        viewModel.getDetectionStatusIcon().observe(this,
+                iconResource -> detectionStatusIcon.setImageResource(iconResource));
+
+        // Observe ID result text
+        viewModel.getIdResultText().observe(this,
+                text -> idResultText.setText(text));
+
+        // Observe data result text
+        viewModel.getDataResultText().observe(this,
+                text -> dataResultText.setText(text));
+
+        // Observe detection status
+        viewModel.getIsDetected().observe(this, isDetected -> {
+            if (Boolean.TRUE.equals(isDetected)) {
+                triggerVibration();
             }
-            if (!dataResult.isEmpty()) {
-                addString(dataResult, detectionCounterData);
-            }
-            this.isDetected = getMaxCount(detectionCounterData) >= detectionThreshold &&
-                    getMaxCount(detectionCounterID) >= detectionThreshold;
-            updateDetectionStatus();
         });
-    }
 
-    private void updateDetectionStatus() {
-        new Handler(Looper.getMainLooper()).post(() -> {
-            detectionStatusIcon.setImageResource(
-                    isDetected ? R.drawable.ic_green_check : R.drawable.ic_red_x);
-            dataResultText.setText(String.format("Data: %s",
-                    getMostFrequentString(detectionCounterData)));
-            idResultText.setText(String.format("Serial: %s",
-                    getMostFrequentString(detectionCounterID)));
-            if (isDetected) {
-                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                if (vibrator != null && vibrator.hasVibrator()) {
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                        vibrator.vibrate(VibrationEffect.createOneShot(200,
-                                VibrationEffect.DEFAULT_AMPLITUDE));
-                    } else {
-                        vibrator.vibrate(200);
-                    }
-                }
+        // Observe flash state
+        viewModel.getIsFlashOn().observe(this, isFlashOn -> {
+            if (camera != null && camera.getCameraInfo().hasFlashUnit()) {
+                camera.getCameraControl().enableTorch(isFlashOn);
+                flashButton.setImageResource(
+                        isFlashOn ? R.drawable.ic_flash_off : R.drawable.ic_flash_on
+                );
             }
         });
     }
 
-    private void resetResult() {
-        this.detectionCounterID.clear();
-        this.detectionCounterData.clear();
-        this.isDetected = false;
-        this.imageAnalyzer.deleteDataDetect();
-        this.imageAnalyzer.deleteIdDetect();
-    }
-
-    private void toggleFlash() {
-        if (camera != null && camera.getCameraInfo().hasFlashUnit()) {
-            isFlashOn = !isFlashOn;
-            camera.getCameraControl().enableTorch(isFlashOn);
-            flashButton.setImageResource(isFlashOn ?
-                    R.drawable.ic_flash_off :
-                    R.drawable.ic_flash_on);
+    private void triggerVibration() {
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null && vibrator.hasVibrator()) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(200,
+                        VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                vibrator.vibrate(200);
+            }
         }
     }
 
     public void startCamera() {
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
                 ProcessCameraProvider.getInstance(this);
+
         cameraProviderFuture.addListener(() -> {
             try {
                 ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
@@ -153,8 +133,7 @@ public class LiveFeedActivity extends AppCompatActivity {
     }
 
     private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
-        Preview preview = new Preview.Builder()
-                .build();
+        Preview preview = new Preview.Builder().build();
         CameraSelector cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
 
@@ -162,7 +141,7 @@ public class LiveFeedActivity extends AppCompatActivity {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888).build();
 
-        imageAnalysis.setAnalyzer(cameraExecutor, imageProxy -> {
+        imageAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), imageProxy -> {
             Bitmap bitmapBuffer = Bitmap.createBitmap(
                     imageProxy.getWidth(),
                     imageProxy.getHeight(),
@@ -181,27 +160,20 @@ public class LiveFeedActivity extends AppCompatActivity {
                     bitmapBuffer.getHeight(),
                     matrix, true);
 
-            if (!isDetected) {
-                imageAnalyzer.detect(rotatedBitmap);
-                updateResultTexts(imageAnalyzer.getId(), imageAnalyzer.getData());
-                rotatedBitmap.recycle();
-            }
+            viewModel.processImage(rotatedBitmap);
         });
 
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
+
         try {
             cameraProvider.unbindAll();
-            camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview,
-                    imageAnalysis);
-            flashButton.setVisibility(camera.getCameraInfo().hasFlashUnit() ?
-                    View.VISIBLE : View.GONE);
+            camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
+
+            // Show/hide flash button based on flash unit availability
+            flashButton.setVisibility(
+                    camera.getCameraInfo().hasFlashUnit() ? View.VISIBLE : View.GONE
+            );
         } catch (Exception ignored) {
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        cameraExecutor.shutdown();
     }
 }

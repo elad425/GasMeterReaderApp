@@ -41,16 +41,19 @@ public class BitmapUtils {
         int canvasWidth = IMAGE_SIZE;
         int canvasHeight = IMAGE_SIZE;
 
-        Bitmap canvasBitmap = Bitmap.createBitmap(canvasWidth, canvasHeight, Bitmap.Config.ARGB_8888);
+        Bitmap canvasBitmap = Bitmap.createBitmap(canvasWidth, canvasHeight,
+                Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(canvasBitmap);
         canvas.drawColor(Color.GRAY);
 
         int originalWidth = originalBitmap.getWidth();
         int originalHeight = originalBitmap.getHeight();
-        float scale = Math.min((float) canvasWidth / originalWidth, (float) canvasHeight / originalHeight);
+        float scale = Math.min((float) canvasWidth / originalWidth,
+                (float) canvasHeight / originalHeight);
         int newWidth = Math.round(originalWidth * scale);
         int newHeight = Math.round(originalHeight * scale);
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, true);
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight,
+                true);
 
         int left = (canvasWidth - newWidth) / 2;
         int top = (canvasHeight - newHeight) / 2;
@@ -59,11 +62,13 @@ public class BitmapUtils {
         return canvasBitmap;
     }
 
-    public static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
+    public static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage)
+            throws IOException {
         InputStream input = context.getContentResolver().openInputStream(selectedImage);
         assert input != null;
         ExifInterface ei = new ExifInterface(input);
-        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL);
 
         switch (orientation) {
             case ExifInterface.ORIENTATION_ROTATE_90:
@@ -81,11 +86,13 @@ public class BitmapUtils {
     private static Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
     }
 
     public static Bitmap convertToGrayscale(Bitmap original) {
-        Bitmap grayscale = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap grayscale = Bitmap.createBitmap(original.getWidth(), original.getHeight(),
+                Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(grayscale);
         ColorMatrix colorMatrix = new ColorMatrix();
         colorMatrix.setSaturation(0);
@@ -96,7 +103,8 @@ public class BitmapUtils {
     }
 
     public static RectF mapToOriginalImage(RectF rectF, int originalWidth, int originalHeight) {
-        float scale = Math.min((float) IMAGE_SIZE / originalWidth, (float) IMAGE_SIZE / originalHeight);
+        float scale = Math.min((float) IMAGE_SIZE / originalWidth,
+                (float) IMAGE_SIZE / originalHeight);
 
         float newWidth = originalWidth * scale;
         float newHeight = originalHeight * scale;
