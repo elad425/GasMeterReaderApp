@@ -2,6 +2,7 @@ package com.example.gasmeterreader.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.entities.Read;
 import com.example.gasmeterreader.viewModels.ReadingViewModel;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
 public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoViewHolder> {
-    private final List<Read> readList;
+    private List<Read> readList;
     private final ReadingViewModel viewModel;
 
     @SuppressLint("NotifyDataSetChanged")
@@ -39,6 +41,9 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
         Read read = readList.get(position);
         holder.serial.setText(String.format("סיריאלי: %d", read.getMeter_id()));
         holder.apartment.setText(String.format("דירה %d", read.getApartment()));
+        if(read.getCurrent_read() != 0) {
+            holder.card.setCardBackgroundColor(Color.parseColor("#358967"));
+        }
 
         holder.itemView.setOnClickListener(v -> {
             Read clickedReadItem = readList.get(holder.getAdapterPosition());
@@ -51,14 +56,21 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
         return readList != null ? readList.size() : 0;
     }
 
+    public void updateReadings(List<Read> newReads) {
+        readList = newReads;
+        notifyDataSetChanged();
+    }
+
     static class VideoViewHolder extends RecyclerView.ViewHolder {
         TextView serial;
         TextView apartment;
+        MaterialCardView card;
 
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
             serial = itemView.findViewById(R.id.serial_number);
             apartment = itemView.findViewById(R.id.apartment_number);
+            card = itemView.findViewById(R.id.card);
         }
     }
 }

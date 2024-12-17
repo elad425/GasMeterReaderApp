@@ -23,12 +23,15 @@ import com.example.gasmeterreader.viewModels.ReadingViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.Objects;
+
 public class ReadingActivity extends AppCompatActivity {
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ReadingViewModel viewModel;
     private TextView ownerText, apartmentText, statusText, serialText, lastReadText;
     private TextInputEditText currentReadInput;
     private boolean isUpdatingInput = false;
+    private int buildingNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +75,7 @@ public class ReadingActivity extends AppCompatActivity {
 
         // Observe changes to the current read input
         viewModel.getCurrentReadInput().observe(this, input -> {
-            if (input != null && !input.equals(currentReadInput.getText().toString())) {
+            if (input != null && !input.equals(Objects.requireNonNull(currentReadInput.getText()).toString())) {
                 isUpdatingInput = true;
                 currentReadInput.setText(input);
                 currentReadInput.setSelection(input.length());
@@ -84,7 +87,7 @@ public class ReadingActivity extends AppCompatActivity {
         viewModel.getSelectedRead().observe(this, read -> {
             if (read != null) {
                 String currentValue = String.valueOf(read.getCurrent_read());
-                if (!currentValue.equals(currentReadInput.getText().toString())) {
+                if (!currentValue.equals(Objects.requireNonNull(currentReadInput.getText()).toString())) {
                     isUpdatingInput = true;
                     currentReadInput.setText(currentValue);
                     currentReadInput.setSelection(currentValue.length());
@@ -96,10 +99,10 @@ public class ReadingActivity extends AppCompatActivity {
         });
     }
 
-
     private void setupViewModel() {
         viewModel = new ViewModelProvider(this).get(ReadingViewModel.class);
-        viewModel.loadReadsForBuilding(getIntent().getIntExtra("building_center", -1));
+        buildingNumber = getIntent().getIntExtra("building_center", -1);
+        viewModel.loadReadsForBuilding(buildingNumber);
 
         viewModel.getSelectedRead().observe(this, read -> {
             if (read != null) {
@@ -120,11 +123,10 @@ public class ReadingActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         RecyclerView lstReadings = findViewById(R.id.read_lst);
-        viewModel.getReads().observe(this, reads -> {
-            ReadingAdapter readingAdapter = new ReadingAdapter(reads, this, viewModel);
-            lstReadings.setAdapter(readingAdapter);
-            lstReadings.setLayoutManager(new LinearLayoutManager(this));
-        });
+        ReadingAdapter readingAdapter = new ReadingAdapter(null, this, viewModel);
+        lstReadings.setAdapter(readingAdapter);
+        lstReadings.setLayoutManager(new LinearLayoutManager(this));
+        viewModel.getReads().observe(this, readingAdapter::updateReadings);
     }
 
     private void setupCameraPermissionLauncher() {
@@ -158,6 +160,13 @@ public class ReadingActivity extends AppCompatActivity {
 
     private void startLiveFeedActivity() {
         Intent intent = new Intent(this, LiveFeedActivity.class);
+        intent.putExtra("building_center", viewModel.getBuilding().getCenter());
         startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.loadReadsForBuilding(buildingNumber);
     }
 }

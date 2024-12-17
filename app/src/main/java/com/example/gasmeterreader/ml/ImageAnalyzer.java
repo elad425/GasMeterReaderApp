@@ -5,7 +5,6 @@ import static com.example.gasmeterreader.utils.BitmapUtils.cropBitmap;
 import static com.example.gasmeterreader.utils.BitmapUtils.mapToOriginalImage;
 import static com.example.gasmeterreader.utils.BitmapUtils.placeOnGrayCanvas;
 import static com.example.gasmeterreader.utils.StringsUtils.fixData;
-import static com.example.gasmeterreader.utils.StringsUtils.fixID;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,10 +17,8 @@ import java.util.List;
 
 public class ImageAnalyzer {
     private String data = "";
-    private String id = "";
     private final Detector boxDetector;
     private final Detector digitsDetectorData;
-    private final Detector digitsDetectorId;
     private Bitmap originalBitmap;
     private Bitmap geryBackImage;
 
@@ -30,7 +27,6 @@ public class ImageAnalyzer {
             @Override
             public void onEmptyDetect() {
                 deleteDataDetect();
-                deleteIdDetect();
             }
 
             @Override
@@ -51,29 +47,10 @@ public class ImageAnalyzer {
             }
         };
 
-        Detector.DetectorListener idDigitsListener = new Detector.DetectorListener() {
-            @Override
-            public void onEmptyDetect() {
-                deleteIdDetect();
-            }
-
-            @Override
-            public void onDetect(@NonNull List<BoundingBox> boundingBoxes, long inferenceTime) {
-                createStringFromDetection(boundingBoxes, "id");
-            }
-        };
-
         boxDetector = new Detector(context,"boxDetection.tflite",
                 Arrays.asList("data", "id"), boxListener);
         digitsDetectorData = new Detector(context, "digitsDetectionData.tflite",
                 Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "dot"), dataDigitsListener);
-        digitsDetectorId = new Detector(context, "digitsDetectionId.tflite",
-                Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "line"), idDigitsListener);
-
-    }
-
-    public void deleteIdDetect(){
-        id = "";
     }
 
     public void deleteDataDetect(){
@@ -87,20 +64,9 @@ public class ImageAnalyzer {
     }
 
     public void cropOriginalBitmap(List<BoundingBox> boundingBoxes){
-        RectF bestIdBox = new RectF();
-        float maxCondId = 0f;
         RectF bestDataBox = new RectF();
         float maxCondData = 0f;
         for (BoundingBox b : boundingBoxes){
-            if(b.getClsName().equals("id")) {
-                if (b.getCnf() > maxCondId){
-                    maxCondId = b.getCnf();
-                    bestIdBox = new RectF(b.getX1() * geryBackImage.getWidth(),
-                            b.getY1() * geryBackImage.getHeight(),
-                            b.getX2() * geryBackImage.getWidth(),
-                            b.getY2()* geryBackImage.getHeight());
-                }
-            }
             if(b.getClsName().equals("data")) {
                 if (b.getCnf() > maxCondData){
                     maxCondData = b.getCnf();
@@ -110,11 +76,6 @@ public class ImageAnalyzer {
                             b.getY2()* geryBackImage.getHeight());
                 }
             }
-        }
-        if (maxCondId != 0f) {
-            Bitmap resultId = cropBitmap(originalBitmap,
-                    mapToOriginalImage(bestIdBox, originalBitmap.getWidth(), originalBitmap.getHeight()));
-            digitsDetectorId.detect(resultId);
         }
         if (maxCondData != 0f) {
             Bitmap resultData = cropBitmap(originalBitmap,
@@ -130,14 +91,8 @@ public class ImageAnalyzer {
             classNames.append(box.getClsName());
             if (type.equals("data")) {
                 data = fixData(classNames.toString());
-            } else {
-                id = fixID(classNames.toString());
             }
         }
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getData() {
@@ -147,6 +102,5 @@ public class ImageAnalyzer {
     public void close(){
         boxDetector.close();
         digitsDetectorData.close();
-        digitsDetectorId.close();
     }
 }

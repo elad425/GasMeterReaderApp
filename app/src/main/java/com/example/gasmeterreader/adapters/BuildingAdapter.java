@@ -40,7 +40,8 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
         Building building = buildingsList.get(position);
         holder.street.setText(String.format("%s %d", building.getAddress(), building.getBuildingNumber()));
         holder.center.setText(String.format("%d",building.getCenter()));
-        holder.leftTodo.setText(String.format("%d",building.getLeftTodo()));
+        holder.leftTodo.setText(String.format("%d",building.getLeftToDo()));
+        holder.total.setText(String.format("%d",building.getReadList().size()));
         holder.city.setText(String.format("%s",building.getCity()));
 
         holder.itemView.setOnClickListener(v -> {
@@ -68,6 +69,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
         TextView center;
         TextView leftTodo;
         TextView city;
+        TextView total;
 
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,6 +77,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
             center = itemView.findViewById(R.id.center);
             leftTodo = itemView.findViewById(R.id.leftTodo);
             city = itemView.findViewById(R.id.city);
+            total = itemView.findViewById(R.id.total);
         }
     }
 }

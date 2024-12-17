@@ -14,7 +14,6 @@ public class Building {
     @PrimaryKey
     private final int center;
     private List<Read> readList;
-    private int leftTodo;
     private boolean isComplete;
 
     public Building(String address, String city, int buildingNumber, int center) {
@@ -23,7 +22,6 @@ public class Building {
         this.buildingNumber = buildingNumber;
         this.center = center;
         this.readList = new ArrayList<>();
-        this.leftTodo = 0;
         this.isComplete = false;
     }
 
@@ -59,16 +57,18 @@ public class Building {
         isComplete = complete;
     }
 
-    public int getLeftTodo() {
-        return leftTodo;
-    }
-
-    public void setLeftTodo(int leftTodo) {
-        this.leftTodo = leftTodo;
-    }
-
     public void addRead(Read read){
         this.readList.add(read);
-        this.leftTodo += 1;
     }
+
+    public int getLeftToDo(){
+        int count = 0;
+        for (Read read: readList){
+            if(read.getCurrent_read() == 0){
+                count += 1;
+            }
+        }
+        return count;
+    }
+
 }

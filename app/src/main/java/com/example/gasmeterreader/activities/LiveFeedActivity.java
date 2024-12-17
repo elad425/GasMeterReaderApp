@@ -28,15 +28,17 @@ import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.viewModels.LiveFeedViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 public class LiveFeedActivity extends AppCompatActivity {
     private PreviewView previewView;
     private ImageButton flashButton;
-    private TextView idResultText;
     private TextView dataResultText;
     private ImageView detectionStatusIcon;
+    private TextView serialText;
+    private TextView apartmentText;
 
     private Camera camera;
     private LiveFeedViewModel viewModel;
@@ -52,6 +54,7 @@ public class LiveFeedActivity extends AppCompatActivity {
 
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(LiveFeedViewModel.class);
+        viewModel.setBuilding(getIntent().getIntExtra("building_center", -1));
 
         // Initialize UI elements
         initializeViews();
@@ -66,9 +69,10 @@ public class LiveFeedActivity extends AppCompatActivity {
     private void initializeViews() {
         previewView = findViewById(R.id.viewFinder);
         flashButton = findViewById(R.id.flashButton);
-        idResultText = findViewById(R.id.idResultText);
         dataResultText = findViewById(R.id.dataResultText);
         detectionStatusIcon = findViewById(R.id.detectionStatusIcon);
+        serialText = findViewById(R.id.serial);
+        apartmentText = findViewById(R.id.apartment);
         Button resetResult = findViewById(R.id.reset);
 
         // Setup click listeners
@@ -81,9 +85,8 @@ public class LiveFeedActivity extends AppCompatActivity {
         viewModel.getDetectionStatusIcon().observe(this,
                 iconResource -> detectionStatusIcon.setImageResource(iconResource));
 
-        // Observe ID result text
-        viewModel.getIdResultText().observe(this,
-                text -> idResultText.setText(text));
+        viewModel.getListPlace().observe(this,
+                this::nextRead);
 
         // Observe data result text
         viewModel.getDataResultText().observe(this,
@@ -93,6 +96,7 @@ public class LiveFeedActivity extends AppCompatActivity {
         viewModel.getIsDetected().observe(this, isDetected -> {
             if (Boolean.TRUE.equals(isDetected)) {
                 triggerVibration();
+                viewModel.enterRead();
             }
         });
 
@@ -105,6 +109,13 @@ public class LiveFeedActivity extends AppCompatActivity {
                 );
             }
         });
+    }
+
+    private void nextRead(int place){
+        serialText.setText(String.valueOf(Objects.requireNonNull(
+                viewModel.getReadList().getValue()).get(place).getMeter_id()));
+        apartmentText.setText("דירה " + Objects.requireNonNull(
+                viewModel.getReadList().getValue()).get(place).getApartment());
     }
 
     private void triggerVibration() {

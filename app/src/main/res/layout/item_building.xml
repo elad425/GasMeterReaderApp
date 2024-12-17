@@ -58,10 +58,21 @@
 
     <TextView
         android:id="@+id/leftTodo"
-        android:padding="15dp"
+        android:padding="5dp"
+        android:layout_marginTop="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:textSize="12sp"
-        android:layout_weight="5"/>
+        android:layout_weight="4"/>
+
+    <TextView
+        android:id="@+id/total"
+        android:padding="5dp"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:layout_weight="4"/>
 </LinearLayout>

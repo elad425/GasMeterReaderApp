@@ -23,6 +23,34 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
 
+    <TextView
+        android:id="@+id/apartment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:padding="8dp"
+        android:layout_marginTop="20dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:background="#80000000"
+        app:layout_constraintStart_toEndOf="@+id/flashButton"
+        app:layout_constraintEnd_toStartOf="@+id/detectionStatusIcon"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/serial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:padding="8dp"
+        android:layout_marginTop="20dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:background="#80000000"
+        app:layout_constraintStart_toEndOf="@+id/flashButton"
+        app:layout_constraintEnd_toStartOf="@+id/detectionStatusIcon"
+        app:layout_constraintTop_toBottomOf="@+id/apartment"/>
+
     <ImageView
         android:id="@+id/detectionStatusIcon"
         android:layout_width="30dp"
@@ -34,24 +62,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/idResultText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:padding="4dp"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:background="#80000000"
-        app:layout_constraintBottom_toTopOf="@id/dataResultText"
-        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/dataResultText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
-        android:padding="4dp"
+        android:padding="10dp"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:background="#80000000"

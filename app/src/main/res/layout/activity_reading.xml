@@ -48,7 +48,7 @@
                     <TextView
                         android:id="@+id/owner_text"
                         android:layout_width="0dp"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
@@ -73,7 +73,7 @@
                     <TextView
                         android:id="@+id/apartment_text"
                         android:layout_width="0dp"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
@@ -130,7 +130,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                 </LinearLayout>
 
@@ -160,29 +160,49 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/current_call_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <!-- Replace the existing TextInputLayout section with this -->
+        <LinearLayout
+            android:id="@+id/input_row"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/details_card"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/current_call_input"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/current_call_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="קריאה נוכחית"
-                android:inputType="text"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_weight="0.8">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/current_call_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="קריאה נוכחית"
+                    android:inputType="numberDecimal"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/submit_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2"
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Submit"
+                android:src="@drawable/ic_camera"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/recycler_title"
@@ -191,7 +211,7 @@
             android:text="קריאות"
             android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/current_call_layout"
+            app:layout_constraintTop_toBottomOf="@id/input_row"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.gasmeterreader.database.BuildingRepository;
+import com.example.gasmeterreader.entities.Building;
 import com.example.gasmeterreader.entities.Read;
 import static com.example.gasmeterreader.utils.EntityUtils.sortReadsByOrder;
 import java.util.List;
@@ -15,6 +16,7 @@ public class ReadingViewModel extends AndroidViewModel {
     private final MutableLiveData<Read> selectedRead = new MutableLiveData<>();
     private final MutableLiveData<Boolean> cameraPermissionGranted = new MutableLiveData<>(false);
     private final MutableLiveData<String> currentReadInput = new MutableLiveData<>("");
+    private Building building;
 
     public ReadingViewModel(Application application) {
         super(application);
@@ -23,7 +25,8 @@ public class ReadingViewModel extends AndroidViewModel {
 
     public void loadReadsForBuilding(int buildingCenter) {
         if (buildingCenter != -1) {
-            List<Read> readList = buildingRepository.getBuildingByCenter(buildingCenter).getReadList();
+            building = buildingRepository.getBuildingByCenter(buildingCenter);
+            List<Read> readList = building.getReadList();
             reads.setValue(sortReadsByOrder(readList));
         }
     }
@@ -49,13 +52,14 @@ public class ReadingViewModel extends AndroidViewModel {
                     read.setCurrent_read(value);
                 }
 
-                // Update the read in the list
                 List<Read> currentReads = reads.getValue();
                 if (currentReads != null) {
                     int index = currentReads.indexOf(read);
                     if (index != -1) {
                         currentReads.set(index, read);
                         reads.setValue(currentReads);
+                        building.setReadList(reads.getValue());
+                        buildingRepository.updateBuilding(building);
                     }
                 }
             } catch (NumberFormatException e) {
@@ -82,5 +86,9 @@ public class ReadingViewModel extends AndroidViewModel {
 
     public LiveData<String> getCurrentReadInput() {
         return currentReadInput;
+    }
+
+    public Building getBuilding() {
+        return building;
     }
 }
