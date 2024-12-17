@@ -30,9 +30,7 @@ public class EntityUtils {
     }
 
     public static List<Read> sortReadsByOrder(List<Read> reads) {
-        // Create a new list to avoid modifying the original
         List<Read> sortedReads = new ArrayList<>(reads);
-        // Sort the list using a comparator
         sortedReads.sort(Comparator.comparingInt(Read::getOrder));
         return sortedReads;
     }

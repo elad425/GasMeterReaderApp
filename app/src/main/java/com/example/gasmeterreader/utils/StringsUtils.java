@@ -40,14 +40,6 @@ public class StringsUtils {
         }
     }
 
-    public static String fixID(String input) {
-        int hyphenIndex = input.indexOf('e');
-        if (hyphenIndex != -1) {
-            return input.substring(hyphenIndex + 1);
-        }
-        return input;
-    }
-
     public static String fixData(String input) {
         if (input == null) {
             return null;

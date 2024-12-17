@@ -1,7 +1,7 @@
 package com.example.gasmeterreader.activities;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +23,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Configuration config = getResources().getConfiguration();
+        config.fontScale = 1.0f;
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -32,9 +36,8 @@ public class MainActivity extends AppCompatActivity {
         lstBuildings.setAdapter(buildingListAdapter);
         lstBuildings.setLayoutManager(new LinearLayoutManager(this));
 
-        viewModel.getBuildings().observe(this, buildings -> {
-            buildingListAdapter.updateBuildings(buildings);
-        });
+        viewModel.getBuildings().observe(this, buildings ->
+                buildingListAdapter.updateBuildings(buildings));
 
         ImageButton refreshButton = findViewById(R.id.refresh);
         refreshButton.setOnClickListener(v -> viewModel.reloadBuildings());

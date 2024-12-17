@@ -8,7 +8,6 @@ import com.example.gasmeterreader.api.Api;
 import com.example.gasmeterreader.entities.Building;
 import com.example.gasmeterreader.entities.Read;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BuildingRepository {
