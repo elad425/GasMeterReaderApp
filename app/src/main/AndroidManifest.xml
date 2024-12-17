@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GasMeterReader"
         android:usesCleartextTraffic="true"
+        android:configChanges="fontScale"
         tools:targetApi="31">
         <activity
             android:name=".activities.ReadingActivity"

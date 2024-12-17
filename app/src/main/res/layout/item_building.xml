@@ -57,7 +57,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/leftTodo"
+        android:id="@+id/total"
         android:padding="5dp"
         android:layout_marginTop="15dp"
         android:layout_width="match_parent"
@@ -67,7 +67,7 @@
         android:layout_weight="4"/>
 
     <TextView
-        android:id="@+id/total"
+        android:id="@+id/leftTodo"
         android:padding="5dp"
         android:layout_marginTop="15dp"
         android:layout_width="match_parent"

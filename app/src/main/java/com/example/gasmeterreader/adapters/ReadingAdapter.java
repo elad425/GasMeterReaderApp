@@ -41,8 +41,11 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
         Read read = readList.get(position);
         holder.serial.setText(String.format("סיריאלי: %d", read.getMeter_id()));
         holder.apartment.setText(String.format("דירה %d", read.getApartment()));
+        holder.last_read.setText(String.format("קודם: %.2f", read.getLast_read()));
+
         if(read.getCurrent_read() != 0) {
             holder.card.setCardBackgroundColor(Color.parseColor("#358967"));
+            holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
         }
 
         holder.itemView.setOnClickListener(v -> {
@@ -64,6 +67,8 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
     static class VideoViewHolder extends RecyclerView.ViewHolder {
         TextView serial;
         TextView apartment;
+        TextView last_read;
+        TextView current_read;
         MaterialCardView card;
 
         public VideoViewHolder(@NonNull View itemView) {
@@ -71,6 +76,8 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
             serial = itemView.findViewById(R.id.serial_number);
             apartment = itemView.findViewById(R.id.apartment_number);
             card = itemView.findViewById(R.id.card);
+            last_read = itemView.findViewById(R.id.last_read);
+            current_read = itemView.findViewById(R.id.current_read);
         }
     }
 }

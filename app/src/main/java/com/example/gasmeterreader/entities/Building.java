@@ -64,7 +64,7 @@ public class Building {
     public int getLeftToDo(){
         int count = 0;
         for (Read read: readList){
-            if(read.getCurrent_read() == 0){
+            if(read.getCurrent_read() != 0){
                 count += 1;
             }
         }
