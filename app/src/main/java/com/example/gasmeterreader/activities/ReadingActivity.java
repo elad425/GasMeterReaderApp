@@ -34,7 +34,7 @@ import java.util.Objects;
 public class ReadingActivity extends AppCompatActivity {
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ReadingViewModel viewModel;
-    private TextView ownerText, apartmentText, statusText, serialText, lastReadText;
+    private TextView ownerText, apartmentText, statusText, serialText, lastReadText, readCounterText;
     private TextInputEditText currentReadInput;
     private boolean isUpdatingInput = false;
     private int buildingNumber;
@@ -66,6 +66,7 @@ public class ReadingActivity extends AppCompatActivity {
         currentReadInput = findViewById(R.id.current_call_input);
         nextButton = findViewById(R.id.next);
         backButton = findViewById(R.id.back);
+        readCounterText = findViewById(R.id.read_counter);
     }
 
     private void setupNavigationButtons() {
@@ -194,19 +195,19 @@ public class ReadingActivity extends AppCompatActivity {
             if (selectedRead != null && readingAdapter != null) {
                 readingAdapter.notifyDataSetChanged();
 
-                // Find the position of the selected read
+                // Update read counter
                 List<Read> currentReads = viewModel.getReads().getValue();
                 if (currentReads != null) {
                     int position = currentReads.indexOf(selectedRead);
-                    if (position != -1) {
-                        // Calculate the scroll position to show the selected read at the bottom
-                        int totalItemCount = layoutManager.getItemCount();
-                        int lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+                    readCounterText.setText(String.format("(%d/%d)", position + 1, currentReads.size()));
 
-                        // If the selected read is not in the visible area, scroll to show it at the bottom
-                        if (position < lastVisibleItemPosition - 1 || position > lastVisibleItemPosition) {
-                            lstReadings.scrollToPosition(Math.min(position, totalItemCount - 1));
-                        }
+                    // Find the position of the selected read
+                    int lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+
+                    // If the selected read is not in the visible area, scroll to show it at the bottom
+                    int totalItemCount = layoutManager.getItemCount();
+                    if (position < lastVisibleItemPosition - 1 || position > lastVisibleItemPosition) {
+                        lstReadings.scrollToPosition(Math.min(position, totalItemCount - 1));
                     }
                 }
             }
