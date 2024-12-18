@@ -30,15 +30,58 @@ public class ReadingViewModel extends AndroidViewModel {
             building = buildingRepository.getBuildingByCenter(buildingCenter);
             List<Read> readList = building.getReadList();
             reads.setValue(sortReadsByOrder(readList));
+
+            // Select the first unread read when loading
+            selectFirstUnreadRead();
+        }
+    }
+
+    private void selectFirstUnreadRead() {
+        List<Read> readList = reads.getValue();
+        if (readList != null && !readList.isEmpty()) {
+            // Always prefer the first item
+            setSelectedRead(readList.get(0));
+
+            // If there are unread reads, try to select the first unread
+            for (Read read : readList) {
+                if (!read.isRead()) {
+                    setSelectedRead(read);
+                    break;
+                }
+            }
         }
     }
 
     public void setSelectedRead(Read read) {
         selectedRead.setValue(read);
-        if (read != null  && read.getCurrent_read() != 0) {
+        if (read != null && read.getCurrent_read() != 0) {
             currentReadInput.setValue(String.valueOf(read.getCurrent_read()));
         } else {
             currentReadInput.setValue("");
+        }
+    }
+
+    public void moveToNextRead() {
+        List<Read> readList = reads.getValue();
+        Read currentRead = selectedRead.getValue();
+
+        if (readList != null && currentRead != null) {
+            int currentIndex = readList.indexOf(currentRead);
+            if (currentIndex < readList.size() - 1) {
+                setSelectedRead(readList.get(currentIndex + 1));
+            }
+        }
+    }
+
+    public void moveToPreviousRead() {
+        List<Read> readList = reads.getValue();
+        Read currentRead = selectedRead.getValue();
+
+        if (readList != null && currentRead != null) {
+            int currentIndex = readList.indexOf(currentRead);
+            if (currentIndex > 0) {
+                setSelectedRead(readList.get(currentIndex - 1));
+            }
         }
     }
 

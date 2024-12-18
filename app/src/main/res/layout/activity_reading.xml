@@ -199,6 +199,26 @@
                     android:nextFocusDown="@id/current_call_input"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <ImageButton
+                android:id="@+id/back"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2"
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="next"
+                android:src="@drawable/ic_arrow_back"/>
+
+            <ImageButton
+                android:id="@+id/next"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2"
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="back"
+                android:src="@drawable/ic_arrow_next"/>
+
         </LinearLayout>
 
         <TextView

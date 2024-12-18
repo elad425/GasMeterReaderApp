@@ -21,12 +21,19 @@ import java.util.List;
 public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoViewHolder> {
     private List<Read> readList;
     private final ReadingViewModel viewModel;
+    private RecyclerView recyclerView;
 
     @SuppressLint("NotifyDataSetChanged")
     public ReadingAdapter(List<Read> readList, Context context, ReadingViewModel viewModel) {
         this.readList = readList;
         this.viewModel = viewModel;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = recyclerView;
     }
 
     @NonNull
@@ -39,14 +46,21 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         Read read = readList.get(position);
+        Read selectedRead = viewModel.getSelectedRead().getValue();
+
+        // Set basic read information
         holder.serial.setText(String.format("סיריאלי: %d", read.getMeter_id()));
         holder.apartment.setText(String.format("דירה %d", read.getApartment()));
         holder.last_read.setText(String.format("קודם: %.2f", read.getLast_read()));
 
-        if(read.isRead() && read.getCurrent_read() != 0) {
+        // Determine background color based on read status and selection
+        if (selectedRead != null && selectedRead.getMeter_id() == read.getMeter_id()) {
+            holder.card.setCardBackgroundColor(Color.parseColor("#474e59"));
+            holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
+        } else if (read.isRead() && read.getCurrent_read() != 0) {
             holder.card.setCardBackgroundColor(Color.parseColor("#358967"));
             holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
-        }else{
+        } else {
             holder.current_read.setText("");
             holder.card.setCardBackgroundColor(Color.parseColor("#2b2f36"));
         }
@@ -65,6 +79,10 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
     public void updateReadings(List<Read> newReads) {
         readList = newReads;
         notifyDataSetChanged();
+    }
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
     }
 
     static class VideoViewHolder extends RecyclerView.ViewHolder {

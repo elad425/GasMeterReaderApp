@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,8 @@ public class ReadingActivity extends AppCompatActivity {
     private TextInputEditText currentReadInput;
     private boolean isUpdatingInput = false;
     private int buildingNumber;
+    private ReadingAdapter readingAdapter;
+    private ImageButton nextButton, backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class ReadingActivity extends AppCompatActivity {
         setupCameraPermissionLauncher();
         setupLiveFeedButton();
         setupCurrentReadInput();
+        setupNavigationButtons();
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
     }
@@ -60,6 +64,13 @@ public class ReadingActivity extends AppCompatActivity {
         serialText = findViewById(R.id.serial_text);
         lastReadText = findViewById(R.id.last_call_text);
         currentReadInput = findViewById(R.id.current_call_input);
+        nextButton = findViewById(R.id.next);
+        backButton = findViewById(R.id.back);
+    }
+
+    private void setupNavigationButtons() {
+        nextButton.setOnClickListener(v -> viewModel.moveToNextRead());
+        backButton.setOnClickListener(v -> viewModel.moveToPreviousRead());
     }
 
     private void setupCurrentReadInput() {
@@ -117,12 +128,22 @@ public class ReadingActivity extends AppCompatActivity {
         // Update input field when selected read changes
         viewModel.getSelectedRead().observe(this, read -> {
             if (read != null) {
-                String currentValue = String.valueOf(read.getCurrent_read());
+                String currentValue = read.getCurrent_read() != 0 ?
+                        String.valueOf(read.getCurrent_read()) : "";
                 if (!currentValue.equals(Objects.requireNonNull(currentReadInput.getText()).toString())) {
                     isUpdatingInput = true;
                     currentReadInput.setText(currentValue);
                     currentReadInput.setSelection(currentValue.length());
                     isUpdatingInput = false;
+                }
+                // Scroll to the selected read in the RecyclerView
+                List<Read> currentReads = viewModel.getReads().getValue();
+                if (currentReads != null) {
+                    int position = currentReads.indexOf(read);
+                    if (position != -1) {
+                        ((LinearLayoutManager)Objects.requireNonNull(readingAdapter.getRecyclerView().getLayoutManager()))
+                                .scrollToPositionWithOffset(position, 0);
+                    }
                 }
             } else {
                 currentReadInput.setText("");
@@ -154,10 +175,34 @@ public class ReadingActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         RecyclerView lstReadings = findViewById(R.id.read_lst);
-        ReadingAdapter readingAdapter = new ReadingAdapter(null, this, viewModel);
+        readingAdapter = new ReadingAdapter(null, this, viewModel);
         lstReadings.setAdapter(readingAdapter);
         lstReadings.setLayoutManager(new LinearLayoutManager(this));
-        viewModel.getReads().observe(this, readingAdapter::updateReadings);
+
+        // Observe reads
+        viewModel.getReads().observe(this, reads -> {
+            readingAdapter.updateReadings(reads);
+            // If no read is currently selected and there are reads, select the first unread
+            if (viewModel.getSelectedRead().getValue() == null && !reads.isEmpty()) {
+                for (Read read : reads) {
+                    if (!read.isRead()) {
+                        viewModel.setSelectedRead(read);
+                        break;
+                    }
+                }
+                // If all reads are read, select the first one
+                if (viewModel.getSelectedRead().getValue() == null) {
+                    viewModel.setSelectedRead(reads.get(0));
+                }
+            }
+        });
+
+        // Observe selected read to update RecyclerView
+        viewModel.getSelectedRead().observe(this, selectedRead -> {
+            if (selectedRead != null && readingAdapter != null) {
+                readingAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void setupCameraPermissionLauncher() {
