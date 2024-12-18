@@ -136,15 +136,6 @@ public class ReadingActivity extends AppCompatActivity {
                     currentReadInput.setSelection(currentValue.length());
                     isUpdatingInput = false;
                 }
-                // Scroll to the selected read in the RecyclerView
-                List<Read> currentReads = viewModel.getReads().getValue();
-                if (currentReads != null) {
-                    int position = currentReads.indexOf(read);
-                    if (position != -1) {
-                        ((LinearLayoutManager)Objects.requireNonNull(readingAdapter.getRecyclerView().getLayoutManager()))
-                                .scrollToPositionWithOffset(position, 0);
-                    }
-                }
             } else {
                 currentReadInput.setText("");
             }
@@ -177,7 +168,8 @@ public class ReadingActivity extends AppCompatActivity {
         RecyclerView lstReadings = findViewById(R.id.read_lst);
         readingAdapter = new ReadingAdapter(null, this, viewModel);
         lstReadings.setAdapter(readingAdapter);
-        lstReadings.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        lstReadings.setLayoutManager(layoutManager);
 
         // Observe reads
         viewModel.getReads().observe(this, reads -> {
@@ -197,10 +189,26 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
-        // Observe selected read to update RecyclerView
+        // Observe selected read to update RecyclerView and scroll position
         viewModel.getSelectedRead().observe(this, selectedRead -> {
             if (selectedRead != null && readingAdapter != null) {
                 readingAdapter.notifyDataSetChanged();
+
+                // Find the position of the selected read
+                List<Read> currentReads = viewModel.getReads().getValue();
+                if (currentReads != null) {
+                    int position = currentReads.indexOf(selectedRead);
+                    if (position != -1) {
+                        // Calculate the scroll position to show the selected read at the bottom
+                        int totalItemCount = layoutManager.getItemCount();
+                        int lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
+
+                        // If the selected read is not in the visible area, scroll to show it at the bottom
+                        if (position < lastVisibleItemPosition - 1 || position > lastVisibleItemPosition) {
+                            lstReadings.scrollToPosition(Math.min(position, totalItemCount - 1));
+                        }
+                    }
+                }
             }
         });
     }
