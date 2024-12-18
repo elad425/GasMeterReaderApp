@@ -36,7 +36,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> errorCount = new MutableLiveData<>(0);
 
     private final HashMap<String, Integer> detectionCounterData = new HashMap<>();
-    private final int detectionThreshold = 3;
+    private final int detectionThreshold = 5;
 
     private final ImageAnalyzer imageAnalyzer;
     private final ExecutorService cameraExecutor;

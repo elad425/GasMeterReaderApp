@@ -151,7 +151,7 @@ public class LiveFeedActivity extends AppCompatActivity {
         });
 
         viewModel.getErrorCount().observe(this, errorCount -> {
-            if (errorCount > 100) {
+            if (errorCount > 200) {
                 Toast.makeText(this, "מונה לא נכון", Toast.LENGTH_SHORT).show();
                 viewModel.resetError();
             }

@@ -78,7 +78,9 @@ public class StringsUtils {
                     try {
                         double inputValue = Double.parseDouble(modifiedInput);
                         if (inputValue >= checkValue && inputValue - checkValue <= 30) {
-                            return modifiedInput;
+                            if (i == 3) {
+                                return modifiedInput.substring(0, modifiedInput.length() - 1);
+                            } else return modifiedInput;
                         }
                     } catch (NumberFormatException ignored) {
                     }
@@ -92,7 +94,9 @@ public class StringsUtils {
                 double checkDouble = Double.parseDouble(check);
                 if (inputDouble >= checkDouble
                         && inputDouble - checkDouble <= 30) {
-                    return input;
+                    if (input.indexOf('.') == input.length() - 4){
+                        return input.substring(0, input.length() - 1);
+                    } else return input;
                 }
             } catch (NumberFormatException e) {
                 return "None";
