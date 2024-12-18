@@ -34,7 +34,7 @@ public class StringsUtils {
             }
         }
         if(mostFrequent == null){
-            return "not detected";
+            return "לא נמצא";
         } else{
             return mostFrequent;
         }

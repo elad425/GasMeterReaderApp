@@ -73,10 +73,9 @@ public class LiveFeedViewModel extends AndroidViewModel {
                 StringsUtils.addString(dataResult, detectionCounterData);
             }
 
-            boolean newDetectionStatus =
-                    StringsUtils.getMaxCount(detectionCounterData) >= detectionThreshold;
-
-            isDetected.setValue(newDetectionStatus);
+            if (StringsUtils.getMaxCount(detectionCounterData) >= detectionThreshold){
+                isDetected.setValue(Boolean.TRUE);
+            }
             updateDetectionStatus();
         });
     }
