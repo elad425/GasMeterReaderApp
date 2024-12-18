@@ -140,22 +140,9 @@ public class LiveFeedActivity extends AppCompatActivity {
             }
         });
 
-        // Observe flash state
         viewModel.getIsFlashOn().observe(this, isFlashOn -> {
             if (camera != null && camera.getCameraInfo().hasFlashUnit()) {
                 camera.getCameraControl().enableTorch(isFlashOn);
-
-                // Rotate animation for flash button
-                ObjectAnimator rotation = ObjectAnimator.ofFloat(
-                        flashButton,
-                        "rotation",
-                        isFlashOn ? 0f : 180f,
-                        isFlashOn ? 180f : 360f
-                );
-                rotation.setDuration(ANIMATION_DURATION);
-                rotation.setInterpolator(new AccelerateDecelerateInterpolator());
-                rotation.start();
-
                 flashButton.setIconResource(
                         isFlashOn ? R.drawable.ic_flash_off : R.drawable.ic_flash_on
                 );

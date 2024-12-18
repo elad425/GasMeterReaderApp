@@ -130,6 +130,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
             if(temp.get(listPlace.getValue()).getCurrent_read() == 0) {
                 temp.get(listPlace.getValue()).setCurrent_read(Double.parseDouble(
                         Objects.requireNonNull(dataResultText.getValue())));
+                temp.get(listPlace.getValue()).wasRead();
                 reads.setValue(temp);
                 building.setReadList(temp);
                 buildingRepository.updateBuilding(building);

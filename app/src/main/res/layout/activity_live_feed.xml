@@ -122,7 +122,7 @@
                 android:id="@+id/reset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="next"
+                android:text="הבא"
                 android:textColor="@color/black"
                 app:cornerRadius="24dp"
                 android:backgroundTint="@android:color/white"

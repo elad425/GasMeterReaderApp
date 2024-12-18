@@ -16,7 +16,7 @@
             android:id="@+id/details_card"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
@@ -34,7 +34,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="3">
 
                     <TextView
                         android:id="@+id/owner_label"
@@ -47,10 +47,11 @@
 
                     <TextView
                         android:id="@+id/owner_text"
+                        android:layout_marginStart="10dp"
                         android:layout_width="0dp"
-                        android:textSize="10sp"
+                        android:textSize="12sp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                 </LinearLayout>
 
@@ -59,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="8dp"
-                    android:weightSum="2">
+                    android:weightSum="3">
 
                     <TextView
                         android:id="@+id/apartment_label"
@@ -73,9 +74,10 @@
                     <TextView
                         android:id="@+id/apartment_text"
                         android:layout_width="0dp"
+                        android:layout_marginStart="10dp"
                         android:textSize="14sp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                 </LinearLayout>
 
@@ -89,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="8dp"
-                    android:weightSum="2">
+                    android:weightSum="3">
 
                     <TextView
                         android:id="@+id/status_label"
@@ -103,9 +105,10 @@
                     <TextView
                         android:id="@+id/status_text"
                         android:layout_width="0dp"
+                        android:layout_marginStart="10dp"
                         android:textSize="12sp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                 </LinearLayout>
 
@@ -114,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="8dp"
-                    android:weightSum="2">
+                    android:weightSum="3">
 
                     <TextView
                         android:id="@+id/serial_label"
@@ -128,8 +131,9 @@
                     <TextView
                         android:id="@+id/serial_text"
                         android:layout_width="0dp"
+                        android:layout_marginStart="10dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:textSize="14sp"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                 </LinearLayout>
@@ -144,7 +148,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="8dp"
-                    android:weightSum="2">
+                    android:weightSum="3">
 
                     <TextView
                         android:id="@+id/last_call_label"
@@ -158,8 +162,9 @@
                     <TextView
                         android:id="@+id/last_call_text"
                         android:layout_width="0dp"
+                        android:layout_marginStart="10dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:textSize="14sp"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                 </LinearLayout>
@@ -217,7 +222,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Scrollable RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/read_lst"
             android:layout_width="0dp"
