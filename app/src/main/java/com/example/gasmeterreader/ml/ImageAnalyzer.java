@@ -12,15 +12,20 @@ import android.graphics.RectF;
 
 import androidx.annotation.NonNull;
 
+import com.example.gasmeterreader.entities.Read;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class ImageAnalyzer {
     private String data = "";
     private final Detector boxDetector;
     private final Detector digitsDetectorData;
     private Bitmap originalBitmap;
-    private Bitmap geryBackImage;
+    private Bitmap greyBackImage;
+    private Read read;
+    private int errorCount = 0;
 
     public ImageAnalyzer(Context context){
         Detector.DetectorListener boxListener = new Detector.DetectorListener() {
@@ -51,16 +56,18 @@ public class ImageAnalyzer {
                 Arrays.asList("data", "id"), boxListener);
         digitsDetectorData = new Detector(context, "digitsDetectionData.tflite",
                 Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "dot"), dataDigitsListener);
+
     }
 
     public void deleteDataDetect(){
         data = "";
     }
 
-    public void detect(Bitmap bitmap){
+    public void detect(Bitmap bitmap, Read read){
         originalBitmap = convertToGrayscale(bitmap);
-        geryBackImage = placeOnGrayCanvas(originalBitmap);
-        boxDetector.detect(geryBackImage);
+        greyBackImage = placeOnGrayCanvas(originalBitmap);
+        boxDetector.detect(greyBackImage);
+        this.read = read;
     }
 
     public void cropOriginalBitmap(List<BoundingBox> boundingBoxes){
@@ -70,10 +77,10 @@ public class ImageAnalyzer {
             if(b.getClsName().equals("data")) {
                 if (b.getCnf() > maxCondData){
                     maxCondData = b.getCnf();
-                    bestDataBox = new RectF(b.getX1() * geryBackImage.getWidth(),
-                            b.getY1() * geryBackImage.getHeight(),
-                            b.getX2() * geryBackImage.getWidth(),
-                            b.getY2()* geryBackImage.getHeight());
+                    bestDataBox = new RectF(b.getX1() * greyBackImage.getWidth(),
+                            b.getY1() * greyBackImage.getHeight(),
+                            b.getX2() * greyBackImage.getWidth(),
+                            b.getY2()* greyBackImage.getHeight());
                 }
             }
         }
@@ -89,14 +96,27 @@ public class ImageAnalyzer {
         StringBuilder classNames = new StringBuilder();
         for (BoundingBox box : boundingBoxes) {
             classNames.append(box.getClsName());
-            if (type.equals("data")) {
-                data = fixData(classNames.toString());
+            if (type.equals("data") && read != null) {
+                String result = fixData(classNames.toString(),String.valueOf(read.getLast_read()));
+                if (!Objects.equals(result, "None")) {
+                    data = result;
+                } else{
+                    errorCount+=1;
+                }
             }
         }
     }
 
     public String getData() {
         return data;
+    }
+
+    public int getErrorCount(){
+        return errorCount;
+    }
+
+    public void resetError(){
+        errorCount = 0;
     }
 
     public void close(){

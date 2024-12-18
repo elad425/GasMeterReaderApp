@@ -33,12 +33,11 @@ public class LiveFeedViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Read>> reads = new MutableLiveData<>();
     private Building building;
     private final MutableLiveData<Integer> listPlace = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> errorCount = new MutableLiveData<>(0);
 
-    // Detection helpers
     private final HashMap<String, Integer> detectionCounterData = new HashMap<>();
-    private final int detectionThreshold = 4;
+    private final int detectionThreshold = 3;
 
-    // Image analysis
     private final ImageAnalyzer imageAnalyzer;
     private final ExecutorService cameraExecutor;
 
@@ -51,17 +50,17 @@ public class LiveFeedViewModel extends AndroidViewModel {
         this.buildingRepository = new BuildingRepository(application);
     }
 
-    // Getters for LiveData
     public LiveData<Boolean> getIsDetected() { return isDetected; }
     public LiveData<String> getDataResultText() { return dataResultText; }
     public LiveData<Integer> getDetectionStatusIcon() { return detectionStatusIcon; }
     public LiveData<Boolean> getIsFlashOn() { return isFlashOn; }
     public LiveData<Integer> getListPlace() { return listPlace; }
+    public LiveData<Integer> getErrorCount() { return errorCount; }
     public LiveData<List<Read>> getReadList() { return reads; }
 
     public void processImage(Bitmap rotatedBitmap) {
-        if (Boolean.FALSE.equals(isDetected.getValue())) {
-            imageAnalyzer.detect(rotatedBitmap);
+        if (Boolean.FALSE.equals(isDetected.getValue()) && getListPlace().getValue() != null) {
+            imageAnalyzer.detect(rotatedBitmap, Objects.requireNonNull(reads.getValue()).get(getListPlace().getValue()));
             updateResultTexts(imageAnalyzer.getData());
             rotatedBitmap.recycle();
         }
@@ -77,18 +76,17 @@ public class LiveFeedViewModel extends AndroidViewModel {
                 isDetected.setValue(Boolean.TRUE);
             }
             updateDetectionStatus();
+            errorCount.setValue(imageAnalyzer.getErrorCount());
         });
     }
 
     private void updateDetectionStatus() {
         new Handler(Looper.getMainLooper()).post(() -> {
-            // Update detection icon
             detectionStatusIcon.setValue(
                     Boolean.TRUE.equals(isDetected.getValue()) ?
                             R.drawable.ic_green_check : R.drawable.ic_red_x
             );
 
-            // Update result texts
             dataResultText.setValue(String.format("%s",
                     StringsUtils.getMostFrequentString(detectionCounterData)));
 
@@ -100,6 +98,11 @@ public class LiveFeedViewModel extends AndroidViewModel {
         isDetected.setValue(false);
         imageAnalyzer.deleteDataDetect();
         incrementListPlace();
+    }
+
+    public void resetError(){
+        errorCount.setValue(0);
+        imageAnalyzer.resetError();
     }
 
     public void toggleFlash() {

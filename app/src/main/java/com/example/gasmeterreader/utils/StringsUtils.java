@@ -40,10 +40,65 @@ public class StringsUtils {
         }
     }
 
-    public static String fixData(String input) {
-        if (input == null) {
-            return null;
-        }
-        return input.replace("dot", ".");
+    public static String insertDot(String str, int positionFromRight) {
+        if (str.length() <= positionFromRight) return str;
+        return str.substring(0, str.length() - positionFromRight) + "." + str.substring(str.length() - positionFromRight);
     }
+
+    public static boolean hasMoreThanOneDot(String str) {
+        int firstDot = str.indexOf('.');
+        if (firstDot == -1) {
+            return false; // No dot found
+        }
+        int secondDot = str.indexOf('.', firstDot + 1);
+        return secondDot != -1; // Check if there's another dot
+    }
+
+    public static String fixId(String input) {
+        input = input.replaceFirst("^0+", "");
+        int dashIndex = input.indexOf("Line");
+        if (dashIndex != -1) {
+            input = input.substring(dashIndex + 4);
+        }
+        return input;
+    }
+
+    public static String fixData(String input, String check) {
+        if (input == null) {
+            return "";
+        }
+        input = input.replace("dot", ".");
+        input = input.replaceFirst("^0+", "");
+
+        if(!input.contains(".")) {
+            double checkValue = Double.parseDouble(check);
+            for (int i = 3; i >= 1; i--) {
+                try {
+                    String modifiedInput = insertDot(input, i);
+                    try {
+                        double inputValue = Double.parseDouble(modifiedInput);
+                        if (inputValue >= checkValue && inputValue - checkValue <= 30) {
+                            return modifiedInput;
+                        }
+                    } catch (NumberFormatException ignored) {
+                    }
+                } catch (NumberFormatException e) {
+                    return "None";
+                }
+            }
+        } else if(!hasMoreThanOneDot(input) ){
+            try {
+                double inputDouble = Double.parseDouble(input);
+                double checkDouble = Double.parseDouble(check);
+                if (inputDouble >= checkDouble
+                        && inputDouble - checkDouble <= 30) {
+                    return input;
+                }
+            } catch (NumberFormatException e) {
+                return "None";
+            }
+        }
+        return "None";
+    }
+
 }

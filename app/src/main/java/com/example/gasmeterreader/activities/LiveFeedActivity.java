@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -146,6 +147,13 @@ public class LiveFeedActivity extends AppCompatActivity {
                 flashButton.setIconResource(
                         isFlashOn ? R.drawable.ic_flash_off : R.drawable.ic_flash_on
                 );
+            }
+        });
+
+        viewModel.getErrorCount().observe(this, errorCount -> {
+            if (errorCount > 100) {
+                Toast.makeText(this, "מונה לא נכון", Toast.LENGTH_SHORT).show();
+                viewModel.resetError();
             }
         });
     }
