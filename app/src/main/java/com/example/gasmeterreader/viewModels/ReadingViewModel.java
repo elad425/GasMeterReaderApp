@@ -44,7 +44,7 @@ public class ReadingViewModel extends AndroidViewModel {
 
             // If there are unread reads, try to select the first unread
             for (Read read : readList) {
-                if (!read.isRead()) {
+                if (!read.isRead() || read.getCurrent_read() == 0) {
                     setSelectedRead(read);
                     break;
                 }
