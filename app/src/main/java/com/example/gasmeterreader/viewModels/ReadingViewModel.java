@@ -1,6 +1,8 @@
 package com.example.gasmeterreader.viewModels;
 
 import android.app.Application;
+import android.widget.Toast;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -45,25 +47,25 @@ public class ReadingViewModel extends AndroidViewModel {
         Read read = selectedRead.getValue();
         if (read != null) {
             try {
-                if (input.isEmpty()) {
-                    read.setCurrent_read(0);
-                } else {
-                    double value = Double.parseDouble(input);
+                double value = input.isEmpty() ? 0 : Double.parseDouble(input.trim());
+                if (value >= 0 && value <= 99999) {
                     read.setCurrent_read(value);
-                }
 
-                List<Read> currentReads = reads.getValue();
-                if (currentReads != null) {
-                    int index = currentReads.indexOf(read);
-                    if (index != -1) {
-                        currentReads.set(index, read);
-                        reads.setValue(currentReads);
-                        building.setReadList(reads.getValue());
-                        buildingRepository.updateBuilding(building);
+                    List<Read> currentReads = reads.getValue();
+                    if (currentReads != null) {
+                        int index = currentReads.indexOf(read);
+                        if (index != -1) {
+                            read.wasRead();
+                            currentReads.set(index, read);
+                            reads.setValue(currentReads);
+                            building.setReadList(reads.getValue());
+                            buildingRepository.updateBuilding(building);
+                        }
                     }
+                } else {
+                    Toast.makeText(getApplication(), "Invalid meter reading", Toast.LENGTH_SHORT).show();
                 }
-            } catch (NumberFormatException e) {
-                // Invalid number format - keep the previous value
+            } catch (NumberFormatException ignored) {
             }
         }
     }

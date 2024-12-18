@@ -15,6 +15,7 @@ public class Read {
     private double current_read;
     private final int center;
     private final String comment;
+    private boolean isRead;
 
     public Read(int user_id, String city, String street, int house_number,
                 String entry, int order, String user_name, String user_status, int apartment,
@@ -33,6 +34,7 @@ public class Read {
         this.current_read = current_read;
         this.center = center;
         this.comment = comment;
+        this.isRead = false;
     }
 
     public int getCenter() {
@@ -93,6 +95,14 @@ public class Read {
 
     public String getComment() {
         return comment;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void wasRead() {
+        isRead = true;
     }
 
 }

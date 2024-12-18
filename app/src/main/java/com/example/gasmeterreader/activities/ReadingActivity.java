@@ -1,11 +1,14 @@
 package com.example.gasmeterreader.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,10 +22,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.adapters.ReadingAdapter;
+import com.example.gasmeterreader.entities.Read;
 import com.example.gasmeterreader.viewModels.ReadingViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.List;
 import java.util.Objects;
 
 public class ReadingActivity extends AppCompatActivity {
@@ -71,6 +76,32 @@ public class ReadingActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {}
+        });
+
+        // Add keyboard action listener to move to next read
+        currentReadInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                    actionId == EditorInfo.IME_ACTION_NEXT) {
+                // Get the current list of reads
+                List<Read> currentReads = viewModel.getReads().getValue();
+                Read currentSelectedRead = viewModel.getSelectedRead().getValue();
+
+                if (currentReads != null && currentSelectedRead != null) {
+                    int currentIndex = currentReads.indexOf(currentSelectedRead);
+
+                    // If there's a next read, select it
+                    if (currentIndex < currentReads.size() - 1) {
+                        Read nextRead = currentReads.get(currentIndex + 1);
+                        viewModel.setSelectedRead(nextRead);
+                    } else {
+                        Toast.makeText(this, "סיום קריאה", Toast.LENGTH_SHORT).show();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(currentReadInput.getWindowToken(), 0);
+                    }
+                    return true;
+                }
+            }
+            return false;
         });
 
         // Observe changes to the current read input

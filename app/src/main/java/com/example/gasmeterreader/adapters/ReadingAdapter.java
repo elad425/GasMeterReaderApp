@@ -43,9 +43,12 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
         holder.apartment.setText(String.format("דירה %d", read.getApartment()));
         holder.last_read.setText(String.format("קודם: %.2f", read.getLast_read()));
 
-        if(read.getCurrent_read() != 0) {
+        if(read.isRead() && read.getCurrent_read() != 0) {
             holder.card.setCardBackgroundColor(Color.parseColor("#358967"));
             holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
+        }else{
+            holder.current_read.setText("");
+            holder.card.setCardBackgroundColor(Color.parseColor("#2b2f36"));
         }
 
         holder.itemView.setOnClickListener(v -> {

@@ -189,7 +189,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="קריאה נוכחית"
-                    android:inputType="numberDecimal"/>
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@id/current_call_input"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageButton
