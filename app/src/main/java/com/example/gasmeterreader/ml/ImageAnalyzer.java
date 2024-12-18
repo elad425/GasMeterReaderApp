@@ -63,10 +63,13 @@ public class ImageAnalyzer {
         data = "";
     }
 
-    public void detect(Bitmap bitmap, Read read){
+    public void detect(Bitmap bitmap){
         originalBitmap = convertToGrayscale(bitmap);
         greyBackImage = placeOnGrayCanvas(originalBitmap);
         boxDetector.detect(greyBackImage);
+    }
+
+    public void setRead(Read read){
         this.read = read;
     }
 

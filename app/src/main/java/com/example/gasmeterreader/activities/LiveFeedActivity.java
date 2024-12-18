@@ -90,7 +90,7 @@ public class LiveFeedActivity extends AppCompatActivity {
 
         resetButton.setOnClickListener(view -> {
             animateButton(resetButton);
-            viewModel.resetResult();
+            viewModel.nextRead();
         });
     }
 

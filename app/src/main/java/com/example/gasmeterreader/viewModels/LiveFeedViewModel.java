@@ -60,7 +60,8 @@ public class LiveFeedViewModel extends AndroidViewModel {
 
     public void processImage(Bitmap rotatedBitmap) {
         if (Boolean.FALSE.equals(isDetected.getValue()) && getListPlace().getValue() != null) {
-            imageAnalyzer.detect(rotatedBitmap, Objects.requireNonNull(reads.getValue()).get(getListPlace().getValue()));
+            imageAnalyzer.detect(rotatedBitmap);
+            imageAnalyzer.setRead(Objects.requireNonNull(reads.getValue()).get(getListPlace().getValue()));
             updateResultTexts(imageAnalyzer.getData());
             rotatedBitmap.recycle();
         }
@@ -93,11 +94,14 @@ public class LiveFeedViewModel extends AndroidViewModel {
         });
     }
 
-    public void resetResult() {
+    public void nextRead() {
         detectionCounterData.clear();
         isDetected.setValue(false);
         imageAnalyzer.deleteDataDetect();
         incrementListPlace();
+        if(getListPlace().getValue() != null) {
+            imageAnalyzer.setRead(Objects.requireNonNull(reads.getValue()).get(getListPlace().getValue()));
+        }
     }
 
     public void resetError(){
