@@ -35,6 +35,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
         return new VideoViewHolder(view);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         Building building = buildingsList.get(position);

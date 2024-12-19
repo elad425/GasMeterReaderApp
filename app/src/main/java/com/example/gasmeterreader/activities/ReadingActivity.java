@@ -9,6 +9,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
@@ -47,6 +49,7 @@ public class ReadingActivity extends AppCompatActivity {
     private ImageButton searchButton;
     private TextInputEditText searchInput;
     private boolean isSearchVisible = false;
+    private boolean isSearchIconClose = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,7 +180,10 @@ public class ReadingActivity extends AppCompatActivity {
     }
 
     private void setupSearch() {
-        searchButton.setOnClickListener(v -> toggleSearch());
+        searchButton.setOnClickListener(v -> {
+            toggleSearchIcon();
+            toggleSearch();
+        });
 
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -198,6 +204,41 @@ public class ReadingActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    private void toggleSearchIcon() {
+        // Create rotation animation
+        float startDegrees = isSearchIconClose ? 180f : 0f;
+        float endDegrees = isSearchIconClose ? 360f : 180f;
+
+        RotateAnimation rotateAnimation = new RotateAnimation(
+                startDegrees, endDegrees,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f
+        );
+        rotateAnimation.setDuration(200);
+        rotateAnimation.setFillAfter(true);
+
+        // Set animation listener to change the icon at the middle of the rotation
+        rotateAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {}
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+
+        // Start the animation
+        searchButton.startAnimation(rotateAnimation);
+
+        // Change the icon
+        searchButton.setImageResource(isSearchIconClose ?
+                R.drawable.ic_search : R.drawable.ic_close);
+
+        isSearchIconClose = !isSearchIconClose;
     }
 
     private void toggleSearch() {

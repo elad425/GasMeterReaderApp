@@ -36,12 +36,11 @@ public class LiveFeedViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> isPaused = new MutableLiveData<>(false);
 
     private final HashMap<String, Integer> detectionCounterData = new HashMap<>();
-    private final int detectionThreshold = 5;
+    private final int detectionThreshold = 3;
     private Building building;
 
     private final ImageAnalyzer imageAnalyzer;
     private final ExecutorService cameraExecutor;
-
     private final BuildingRepository buildingRepository;
 
     public LiveFeedViewModel(@NonNull Application application) {

@@ -1,86 +1,94 @@
 package com.example.gasmeterreader.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.entities.Read;
 import com.example.gasmeterreader.viewModels.ReadingViewModel;
 import com.google.android.material.card.MaterialCardView;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoViewHolder> {
+public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.ReadViewHolder> {
     private List<Read> readList;
     private List<Read> filteredList;
     private final ReadingViewModel viewModel;
     private final Context context;
+    private final LayoutInflater inflater;
 
-    @SuppressLint("NotifyDataSetChanged")
     public ReadingAdapter(List<Read> readList, ReadingViewModel viewModel, Context context) {
-        this.readList = readList;
         this.viewModel = viewModel;
         this.context = context;
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
+        this.inflater = LayoutInflater.from(context);
+        updateReadings(readList);
     }
 
     @NonNull
     @Override
-    public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_read, parent, false);
-        return new VideoViewHolder(view);
+    public ReadViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ReadViewHolder(inflater.inflate(R.layout.item_read, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ReadViewHolder holder, int position) {
         Read read = filteredList.get(position);
         Read selectedRead = viewModel.getSelectedRead().getValue();
 
-        // Set basic read information
+        bindReadData(holder, read);
+        updateCardAppearance(holder, read, selectedRead);
+        setupClickListener(holder, position);
+    }
+
+    private void bindReadData(ReadViewHolder holder, Read read) {
         holder.serial.setText(String.format("סיריאלי: %d", read.getMeter_id()));
         holder.apartment.setText(String.format("דירה %d", read.getApartment()));
         holder.last_read.setText(String.format("קודם: %.2f", read.getLast_read()));
+    }
 
-        // Determine background color based on read status and selection
-        if (selectedRead != null && selectedRead.getMeter_id() == read.getMeter_id()) {
-            if(!Objects.equals(read.getUser_status(), null)) {
-                holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readNotValidSelected));
-            } else if (read.isRead() && read.getCurrent_read() != 0){
-                holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readDoneSelected));
-            } else {
-                holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.selectedRead));
-            }
-            holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
-        } else if(!Objects.equals(read.getUser_status(), null)) {
-            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readNotValid));
-            holder.current_read.setText(read.getUser_status());
+    private void updateCardAppearance(ReadViewHolder holder, Read read, Read selectedRead) {
+        boolean isSelected = selectedRead != null && selectedRead.getMeter_id() == read.getMeter_id();
+
+        if (read.getUser_status() != null) {
+            handleStatusRead(holder, read, isSelected);
         } else if (read.isRead() && read.getCurrent_read() != 0) {
-            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readDone));
-            holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
+            handleCompletedRead(holder, read, isSelected);
         } else {
-            holder.current_read.setText("");
-            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readBackground));
+            handlePendingRead(holder, isSelected);
         }
+    }
 
+    private void handleStatusRead(ReadViewHolder holder, Read read, boolean isSelected) {
+        holder.card.setCardBackgroundColor(ContextCompat.getColor(context,
+                isSelected ? R.color.readNotValidSelected : R.color.readNotValid));
+        holder.current_read.setText(isSelected ?
+                String.format("נוכחי: %.2f", read.getCurrent_read()) :
+                read.getUser_status());
+    }
+
+    private void handleCompletedRead(ReadViewHolder holder, Read read, boolean isSelected) {
+        holder.card.setCardBackgroundColor(ContextCompat.getColor(context,
+                isSelected ? R.color.readDoneSelected : R.color.readDone));
+        holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
+    }
+
+    private void handlePendingRead(ReadViewHolder holder, boolean isSelected) {
+        holder.card.setCardBackgroundColor(ContextCompat.getColor(context,
+                isSelected ? R.color.selectedRead : R.color.readBackground));
+        holder.current_read.setText("");
+    }
+
+    private void setupClickListener(ReadViewHolder holder, int position) {
         holder.itemView.setOnClickListener(v -> {
-            Read clickedReadItem = filteredList.get(holder.getAdapterPosition());
-            viewModel.setSelectedRead(clickedReadItem);
+            if (position < filteredList.size()) {
+                viewModel.setSelectedRead(filteredList.get(position));
+            }
         });
     }
 
@@ -90,19 +98,21 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
     }
 
     public void updateReadings(List<Read> newReads) {
-        readList = newReads;
-        filteredList = new ArrayList<>(newReads);
+        this.readList = newReads != null ? newReads : new ArrayList<>();
+        this.filteredList = new ArrayList<>(this.readList);
         notifyDataSetChanged();
     }
 
     public void filter(String query) {
-        filteredList.clear();
+        if (readList == null) return;
+
+        filteredList = new ArrayList<>();
         if (query.isEmpty()) {
             filteredList.addAll(readList);
         } else {
+            String lowercaseQuery = query.toLowerCase();
             for (Read read : readList) {
-                if (String.valueOf(read.getApartment()).contains(query) ||
-                        String.valueOf(read.getMeter_id()).contains(query)) {
+                if (matchesFilter(read, lowercaseQuery)) {
                     filteredList.add(read);
                 }
             }
@@ -110,14 +120,19 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
         notifyDataSetChanged();
     }
 
-    static class VideoViewHolder extends RecyclerView.ViewHolder {
-        TextView serial;
-        TextView apartment;
-        TextView last_read;
-        TextView current_read;
-        MaterialCardView card;
+    private boolean matchesFilter(Read read, String query) {
+        return String.valueOf(read.getApartment()).contains(query) ||
+                String.valueOf(read.getMeter_id()).contains(query);
+    }
 
-        public VideoViewHolder(@NonNull View itemView) {
+    static class ReadViewHolder extends RecyclerView.ViewHolder {
+        final TextView serial;
+        final TextView apartment;
+        final TextView last_read;
+        final TextView current_read;
+        final MaterialCardView card;
+
+        ReadViewHolder(@NonNull View itemView) {
             super(itemView);
             serial = itemView.findViewById(R.id.serial_number);
             apartment = itemView.findViewById(R.id.apartment_number);
