@@ -28,7 +28,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
 
     private final MutableLiveData<Boolean> isDetected = new MutableLiveData<>(false);
     private final MutableLiveData<String> dataResultText = new MutableLiveData<>("");
-    private final MutableLiveData<Integer> detectionStatusIcon = new MutableLiveData<>(R.drawable.ic_red_x);
+    private final MutableLiveData<Integer> detectionStatusIcon = new MutableLiveData<>(R.drawable.ic_redx);
     private final MutableLiveData<Boolean> isFlashOn = new MutableLiveData<>(false);
     private final MutableLiveData<List<Read>> reads = new MutableLiveData<>();
     private final MutableLiveData<Integer> listPlace = new MutableLiveData<>(0);
@@ -86,7 +86,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
         new Handler(Looper.getMainLooper()).post(() -> {
             detectionStatusIcon.setValue(
                     Boolean.TRUE.equals(isDetected.getValue()) ?
-                            R.drawable.ic_green_check : R.drawable.ic_red_x
+                            R.drawable.ic_greenv : R.drawable.ic_redx
             );
 
             dataResultText.setValue(String.format("%s",

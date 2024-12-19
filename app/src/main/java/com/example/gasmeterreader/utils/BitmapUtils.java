@@ -1,20 +1,13 @@
 package com.example.gasmeterreader.utils;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.net.Uri;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
-import androidx.exifinterface.media.ExifInterface;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 public class BitmapUtils {
     private static final int IMAGE_SIZE = 640;
@@ -52,34 +45,6 @@ public class BitmapUtils {
 
         canvas.drawBitmap(resizedBitmap, left, top, null);
         return canvasBitmap;
-    }
-
-    public static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage)
-            throws IOException {
-        InputStream input = context.getContentResolver().openInputStream(selectedImage);
-        assert input != null;
-        ExifInterface ei = new ExifInterface(input);
-        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_NORMAL);
-
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                return rotateImage(img, 90);
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                return rotateImage(img, 180);
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                return rotateImage(img, 270);
-            default:
-                return img;
-        }
-    }
-
-
-    private static Bitmap rotateImage(Bitmap source, float angle) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
-                matrix, true);
     }
 
     public static Bitmap convertToGrayscale(Bitmap original) {

@@ -97,7 +97,7 @@
                     android:layout_height="32dp"
                     android:layout_marginEnd="5dp"
                     android:contentDescription="detection status"
-                    android:src="@drawable/ic_red_x"
+                    android:src="@drawable/ic_redx"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
