@@ -7,15 +7,18 @@ import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
@@ -171,11 +174,41 @@ public class LiveFeedActivity extends AppCompatActivity {
         });
 
         viewModel.getErrorCount().observe(this, errorCount -> {
-            if (errorCount > 200) {
-                Toast.makeText(this, "מונה לא נכון", Toast.LENGTH_SHORT).show();
+            if (errorCount > 150) {
+                Toast.makeText(this, "קריאה מחוץ לטווח", Toast.LENGTH_SHORT).show();
+                viewModel.setPaused(Boolean.TRUE);
+                showNumberInputDialog();
                 viewModel.resetError();
             }
         });
+    }
+
+    private void showNumberInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("קריאה לא בטווח");
+
+        // Inflate and get an instance of the layout
+        View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_number_input, null);
+        final EditText input = viewInflated.findViewById(R.id.input);
+        builder.setView(viewInflated);
+
+        builder.setPositiveButton("אישור", (dialog, which) -> {
+            String enteredNumber = input.getText().toString();
+            if (!enteredNumber.isEmpty()) {
+                viewModel.setReadManual((enteredNumber));
+                viewModel.incrementListPlace();
+                viewModel.setPaused(Boolean.FALSE);
+            }
+            dialog.dismiss();
+        });
+
+        builder.setNegativeButton("ביטול", (dialog, which) -> {
+            dialog.cancel();
+            viewModel.setPaused(Boolean.FALSE);
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void animateDetection() {

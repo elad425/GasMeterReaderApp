@@ -6,6 +6,7 @@ import com.example.gasmeterreader.entities.Read;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class EntityUtils {
     public static List<Building> assignReadsToBuildings(List<Read> reads) {
@@ -13,6 +14,9 @@ public class EntityUtils {
         boolean found;
         for (Read read : reads) {
             found = false;
+            if (!Objects.equals(read.getUser_status(), null)){
+                read.setCurrent_read(read.getLast_read());
+            }
             for (Building building : buildings) {
                 if (read.getCenter() == building.getCenter()) {
                     found = true;

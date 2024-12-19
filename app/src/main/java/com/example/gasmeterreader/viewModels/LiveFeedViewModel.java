@@ -33,7 +33,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Read>> reads = new MutableLiveData<>();
     private final MutableLiveData<Integer> listPlace = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> errorCount = new MutableLiveData<>(0);
-    private MutableLiveData<Boolean> isPaused = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isPaused = new MutableLiveData<>(false);
 
     private final HashMap<String, Integer> detectionCounterData = new HashMap<>();
     private final int detectionThreshold = 5;
@@ -94,6 +94,12 @@ public class LiveFeedViewModel extends AndroidViewModel {
                     StringsUtils.getMostFrequentString(detectionCounterData)));
 
         });
+    }
+
+    public void setReadManual(String read){
+        dataResultText.setValue(read);
+        isDetected.setValue(Boolean.TRUE);
+        isDetected.setValue(Boolean.FALSE);
     }
 
     public void nextRead() {
