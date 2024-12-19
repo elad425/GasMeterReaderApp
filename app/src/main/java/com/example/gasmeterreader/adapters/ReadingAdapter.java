@@ -59,7 +59,13 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
 
         // Determine background color based on read status and selection
         if (selectedRead != null && selectedRead.getMeter_id() == read.getMeter_id()) {
-            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.selectedRead));
+            if(!Objects.equals(read.getUser_status(), null)) {
+                holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readNotValidSelected));
+            } else if (read.isRead() && read.getCurrent_read() != 0){
+                holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readDoneSelected));
+            } else {
+                holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.selectedRead));
+            }
             holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
         } else if(!Objects.equals(read.getUser_status(), null)) {
             holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readNotValid));

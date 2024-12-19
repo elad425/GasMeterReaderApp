@@ -50,11 +50,12 @@ import java.util.concurrent.Executors;
 public class LiveFeedActivity extends AppCompatActivity {
     private PreviewView previewView;
     private MaterialButton flashButton;
-    private MaterialButton resetButton;
+    private MaterialButton nextButton;
     private TextView dataResultText;
     private ImageView detectionStatusIcon;
     private TextView serialText;
     private TextView apartmentText;
+    private TextView lastReadText;
 
     private MaterialButton selectReadButton;
     private ReadSelectorAdapter readSelectorAdapter;
@@ -93,11 +94,12 @@ public class LiveFeedActivity extends AppCompatActivity {
     private void initializeViews() {
         previewView = findViewById(R.id.viewFinder);
         flashButton = findViewById(R.id.flashButton);
-        resetButton = findViewById(R.id.reset);
+        nextButton = findViewById(R.id.reset);
         dataResultText = findViewById(R.id.dataResultText);
         detectionStatusIcon = findViewById(R.id.detectionStatusIcon);
         serialText = findViewById(R.id.serial);
         apartmentText = findViewById(R.id.apartment);
+        lastReadText = findViewById(R.id.lastRead);
         selectReadButton = findViewById(R.id.selectReadButton);
 
         selectReadButton.setOnClickListener(v -> {
@@ -111,9 +113,10 @@ public class LiveFeedActivity extends AppCompatActivity {
             viewModel.toggleFlash();
         });
 
-        resetButton.setOnClickListener(view -> {
-            animateButton(resetButton);
+        nextButton.setOnClickListener(view -> {
+            animateButton(nextButton);
             viewModel.nextRead();
+            viewModel.resetError();
         });
     }
 
@@ -145,7 +148,10 @@ public class LiveFeedActivity extends AppCompatActivity {
         viewModel.getDetectionStatusIcon().observe(this, iconResource ->
                 detectionStatusIcon.setImageResource(iconResource));
 
-        viewModel.getListPlace().observe(this, this::nextRead);
+        viewModel.getListPlace().observe(this, place -> {
+            nextRead(place);
+            viewModel.resetError();
+        });
 
         // Observe data result text
         viewModel.getDataResultText().observe(this, text -> {
@@ -237,7 +243,7 @@ public class LiveFeedActivity extends AppCompatActivity {
             GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
             recyclerView.setLayoutManager(layoutManager);
 
-            readSelectorAdapter = new ReadSelectorAdapter(position -> {
+            readSelectorAdapter = new ReadSelectorAdapter(this ,position -> {
                 viewModel.setListPlace(position);
                 bottomSheetDialog.dismiss();
             });
@@ -287,15 +293,19 @@ public class LiveFeedActivity extends AppCompatActivity {
     private void nextRead(int place) {
         String serialNumber = String.valueOf(Objects.requireNonNull(
                 viewModel.getReadList().getValue()).get(place).getMeter_id());
+        String lastReadNumber = String.valueOf(Objects.requireNonNull(
+                viewModel.getReadList().getValue()).get(place).getLast_read());
         String apartmentNumber = "דירה " + Objects.requireNonNull(
                 viewModel.getReadList().getValue()).get(place).getApartment();
 
         // Animate text changes
         animateText(serialText);
         animateText(apartmentText);
+        animateText(lastReadText);
 
         serialText.setText(serialNumber);
         apartmentText.setText(apartmentNumber);
+        lastReadText.setText(lastReadNumber);
     }
 
     private void triggerVibration() {

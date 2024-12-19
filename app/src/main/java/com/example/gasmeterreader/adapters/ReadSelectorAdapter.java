@@ -1,27 +1,34 @@
 package com.example.gasmeterreader.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.entities.Read;
+import com.google.android.material.card.MaterialCardView;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ReadSelectorAdapter extends RecyclerView.Adapter<ReadSelectorAdapter.ReadViewHolder> {
     private List<Read> reads = new ArrayList<>();
     private List<Read> filteredReads = new ArrayList<>();
     private final OnReadSelectedListener listener;
+    private final Context context;
 
     public interface OnReadSelectedListener {
         void onReadSelected(int position);
     }
 
-    public ReadSelectorAdapter(OnReadSelectedListener listener) {
+    public ReadSelectorAdapter(Context context, OnReadSelectedListener listener) {
         this.listener = listener;
+        this.context = context;
     }
 
     @NonNull
@@ -38,6 +45,12 @@ public class ReadSelectorAdapter extends RecyclerView.Adapter<ReadSelectorAdapte
         holder.apartmentText.setText("דירה " + read.getApartment());
         holder.meterIdText.setText("מונה " + read.getMeter_id());
         holder.lastRead.setText(String.format("קודם: %.2f", read.getLast_read()));
+
+        if (read.isRead() && read.getCurrent_read() != 0) {
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readDone));
+        } else if (!Objects.equals(read.getUser_status(), null)) {
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readNotValid));
+        }
 
         holder.itemView.setOnClickListener(v -> {
             int originalPosition = reads.indexOf(filteredReads.get(position));
@@ -79,12 +92,14 @@ public class ReadSelectorAdapter extends RecyclerView.Adapter<ReadSelectorAdapte
         TextView apartmentText;
         TextView meterIdText;
         TextView lastRead;
+        MaterialCardView card;
 
         ReadViewHolder(View itemView) {
             super(itemView);
             apartmentText = itemView.findViewById(R.id.apartmentText);
             meterIdText = itemView.findViewById(R.id.meterIdText);
             lastRead = itemView.findViewById(R.id.lastRead);
+            card = itemView.findViewById(R.id.card);
         }
     }
 }

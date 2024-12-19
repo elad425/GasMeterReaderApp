@@ -5,7 +5,9 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="selectedRead">#e1eeff</color>
     <color name="readDone">#98B4D4</color>
+    <color name="readDoneSelected">#C4E0FF</color>
     <color name="readBackground">#eff6ff</color>
     <color name="readNotValid">#ff6767</color>
+    <color name="readNotValidSelected">#ff9999</color>
     <color name="floatingButtonLiveFeed">#67c5ff</color>
 </resources>
