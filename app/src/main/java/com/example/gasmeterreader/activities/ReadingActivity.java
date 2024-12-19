@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
@@ -27,6 +29,7 @@ import com.example.gasmeterreader.entities.Read;
 import com.example.gasmeterreader.viewModels.ReadingViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
 import java.util.Objects;
@@ -40,6 +43,10 @@ public class ReadingActivity extends AppCompatActivity {
     private int buildingNumber;
     private ReadingAdapter readingAdapter;
     private ImageButton nextButton, backButton;
+    private TextInputLayout searchCard;
+    private ImageButton searchButton;
+    private TextInputEditText searchInput;
+    private boolean isSearchVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,7 @@ public class ReadingActivity extends AppCompatActivity {
         setupLiveFeedButton();
         setupCurrentReadInput();
         setupNavigationButtons();
+        setupSearch();
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
     }
@@ -67,6 +75,9 @@ public class ReadingActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.next);
         backButton = findViewById(R.id.back);
         readCounterText = findViewById(R.id.read_counter);
+        searchButton = findViewById(R.id.search_button);
+        searchCard = findViewById(R.id.search_input_layout);
+        searchInput = findViewById(R.id.search_input);
     }
 
     private void setupNavigationButtons() {
@@ -165,9 +176,68 @@ public class ReadingActivity extends AppCompatActivity {
         });
     }
 
+    private void setupSearch() {
+        searchButton.setOnClickListener(v -> toggleSearch());
+
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                readingAdapter.filter(s.toString());
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        searchInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void toggleSearch() {
+        if (isSearchVisible) {
+            searchCard.animate()
+                    .alpha(0f)
+                    .translationY(-searchCard.getHeight())
+                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                    .withEndAction(() -> {
+                        searchCard.setVisibility(View.GONE);
+                        readCounterText.setVisibility(View.VISIBLE);
+                        searchInput.setText("");
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(searchInput.getWindowToken(), 0);
+                    })
+                    .setDuration(200)
+                    .start();
+        } else {
+            searchCard.setVisibility(View.VISIBLE);
+            readCounterText.setVisibility(View.GONE);
+            searchCard.setAlpha(0f);
+            searchCard.setTranslationY(-searchCard.getHeight());
+            searchCard.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                    .withEndAction(() -> {
+                        searchInput.requestFocus();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(searchInput, InputMethodManager.SHOW_IMPLICIT);
+                    })
+                    .setDuration(200)
+                    .start();
+        }
+        isSearchVisible = !isSearchVisible;
+    }
+
     private void setupRecyclerView() {
         RecyclerView lstReadings = findViewById(R.id.read_lst);
-        readingAdapter = new ReadingAdapter(null, this, viewModel);
+        readingAdapter = new ReadingAdapter(null, viewModel, this);
         lstReadings.setAdapter(readingAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         lstReadings.setLayoutManager(layoutManager);

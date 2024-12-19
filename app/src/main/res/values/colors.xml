@@ -3,4 +3,9 @@
     <color name="black">#FFFFFFFF</color>
     <color name="white">#FF000000</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="selectedRead">#e1eeff</color>
+    <color name="readDone">#98B4D4</color>
+    <color name="readBackground">#eff6ff</color>
+    <color name="readNotValid">#ff6767</color>
+    <color name="floatingButtonLiveFeed">#67c5ff</color>
 </resources>

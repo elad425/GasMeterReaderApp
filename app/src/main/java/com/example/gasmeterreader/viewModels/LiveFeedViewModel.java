@@ -31,12 +31,13 @@ public class LiveFeedViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> detectionStatusIcon = new MutableLiveData<>(R.drawable.ic_red_x);
     private final MutableLiveData<Boolean> isFlashOn = new MutableLiveData<>(false);
     private final MutableLiveData<List<Read>> reads = new MutableLiveData<>();
-    private Building building;
     private final MutableLiveData<Integer> listPlace = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> errorCount = new MutableLiveData<>(0);
+    private MutableLiveData<Boolean> isPaused = new MutableLiveData<>(false);
 
     private final HashMap<String, Integer> detectionCounterData = new HashMap<>();
     private final int detectionThreshold = 5;
+    private Building building;
 
     private final ImageAnalyzer imageAnalyzer;
     private final ExecutorService cameraExecutor;
@@ -57,6 +58,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
     public LiveData<Integer> getListPlace() { return listPlace; }
     public LiveData<Integer> getErrorCount() { return errorCount; }
     public LiveData<List<Read>> getReadList() { return reads; }
+    public LiveData<Boolean> getIsPaused() { return isPaused;}
 
     public void processImage(Bitmap rotatedBitmap) {
         if (Boolean.FALSE.equals(isDetected.getValue()) && getListPlace().getValue() != null) {
@@ -114,6 +116,10 @@ public class LiveFeedViewModel extends AndroidViewModel {
         isFlashOn.setValue(currentFlashState == null || !currentFlashState);
     }
 
+    public void setPaused(boolean paused) {
+        isPaused.setValue(paused);
+    }
+
     public void setBuilding(int center){
         building = buildingRepository.getBuildingByCenter(center);
         reads.setValue(building.getReadList());
@@ -144,6 +150,16 @@ public class LiveFeedViewModel extends AndroidViewModel {
             } else{
                 incrementListPlace();
             }
+        }
+    }
+
+    public void setListPlace(int position) {
+        if (position >= 0 && position < Objects.requireNonNull(reads.getValue()).size()) {
+            listPlace.setValue(position);
+            detectionCounterData.clear();
+            isDetected.setValue(false);
+            imageAnalyzer.deleteDataDetect();
+            imageAnalyzer.setRead(Objects.requireNonNull(reads.getValue()).get(position));
         }
     }
 

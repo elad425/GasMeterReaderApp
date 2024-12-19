@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gasmeterreader.R;
@@ -16,24 +17,27 @@ import com.example.gasmeterreader.entities.Read;
 import com.example.gasmeterreader.viewModels.ReadingViewModel;
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoViewHolder> {
     private List<Read> readList;
+    private List<Read> filteredList;
     private final ReadingViewModel viewModel;
-    private RecyclerView recyclerView;
+    private final Context context;
 
     @SuppressLint("NotifyDataSetChanged")
-    public ReadingAdapter(List<Read> readList, Context context, ReadingViewModel viewModel) {
+    public ReadingAdapter(List<Read> readList, ReadingViewModel viewModel, Context context) {
         this.readList = readList;
         this.viewModel = viewModel;
+        this.context = context;
         notifyDataSetChanged();
     }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        this.recyclerView = recyclerView;
     }
 
     @NonNull
@@ -45,7 +49,7 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
 
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
-        Read read = readList.get(position);
+        Read read = filteredList.get(position);
         Read selectedRead = viewModel.getSelectedRead().getValue();
 
         // Set basic read information
@@ -55,34 +59,49 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.VideoVie
 
         // Determine background color based on read status and selection
         if (selectedRead != null && selectedRead.getMeter_id() == read.getMeter_id()) {
-            holder.card.setCardBackgroundColor(Color.parseColor("#474e59"));
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.selectedRead));
             holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
         } else if (read.isRead() && read.getCurrent_read() != 0) {
-            holder.card.setCardBackgroundColor(Color.parseColor("#358967"));
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readDone));
             holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
+        } else if(!Objects.equals(read.getUser_status(), null)) {
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readNotValid));
+            holder.current_read.setText(read.getUser_status());
         } else {
             holder.current_read.setText("");
-            holder.card.setCardBackgroundColor(Color.parseColor("#2b2f36"));
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readBackground));
         }
 
         holder.itemView.setOnClickListener(v -> {
-            Read clickedReadItem = readList.get(holder.getAdapterPosition());
+            Read clickedReadItem = filteredList.get(holder.getAdapterPosition());
             viewModel.setSelectedRead(clickedReadItem);
         });
     }
 
     @Override
     public int getItemCount() {
-        return readList != null ? readList.size() : 0;
+        return filteredList != null ? filteredList.size() : 0;
     }
 
     public void updateReadings(List<Read> newReads) {
         readList = newReads;
+        filteredList = new ArrayList<>(newReads);
         notifyDataSetChanged();
     }
 
-    public RecyclerView getRecyclerView() {
-        return recyclerView;
+    public void filter(String query) {
+        filteredList.clear();
+        if (query.isEmpty()) {
+            filteredList.addAll(readList);
+        } else {
+            for (Read read : readList) {
+                if (String.valueOf(read.getApartment()).contains(query) ||
+                        String.valueOf(read.getMeter_id()).contains(query)) {
+                    filteredList.add(read);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     static class VideoViewHolder extends RecyclerView.ViewHolder {

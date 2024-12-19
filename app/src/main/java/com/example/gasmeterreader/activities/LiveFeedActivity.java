@@ -10,6 +10,7 @@ import android.os.Vibrator;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,15 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+
+import android.text.Editable;
+import android.text.TextWatcher;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.textfield.TextInputEditText;
+import com.example.gasmeterreader.adapters.ReadSelectorAdapter;
 
 import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.viewModels.LiveFeedViewModel;
@@ -42,6 +52,10 @@ public class LiveFeedActivity extends AppCompatActivity {
     private ImageView detectionStatusIcon;
     private TextView serialText;
     private TextView apartmentText;
+
+    private MaterialButton selectReadButton;
+    private ReadSelectorAdapter readSelectorAdapter;
+    private BottomSheetDialog bottomSheetDialog;
 
     private Camera camera;
     private LiveFeedViewModel viewModel;
@@ -81,6 +95,12 @@ public class LiveFeedActivity extends AppCompatActivity {
         detectionStatusIcon = findViewById(R.id.detectionStatusIcon);
         serialText = findViewById(R.id.serial);
         apartmentText = findViewById(R.id.apartment);
+        selectReadButton = findViewById(R.id.selectReadButton);
+
+        selectReadButton.setOnClickListener(v -> {
+            animateButton(selectReadButton);
+            showReadSelector();
+        });
 
         // Setup click listeners with animations
         flashButton.setOnClickListener(v -> {
@@ -172,6 +192,59 @@ public class LiveFeedActivity extends AppCompatActivity {
         scaleY.start();
     }
 
+    private void showReadSelector() {
+        if (bottomSheetDialog == null) {
+            bottomSheetDialog = new BottomSheetDialog(this);
+            View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_read_selector, null);
+            bottomSheetDialog.setContentView(bottomSheetView);
+
+            bottomSheetDialog.setOnDismissListener(dialog -> viewModel.setPaused(false));
+
+            RecyclerView recyclerView = bottomSheetView.findViewById(R.id.readsRecyclerView);
+            GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+            recyclerView.setLayoutManager(layoutManager);
+
+            readSelectorAdapter = new ReadSelectorAdapter(position -> {
+                viewModel.setListPlace(position);
+                bottomSheetDialog.dismiss();
+            });
+            recyclerView.setAdapter(readSelectorAdapter);
+
+            TextInputEditText searchEdit = bottomSheetView.findViewById(R.id.searchEdit);
+            // Clear focus initially
+            searchEdit.clearFocus();
+
+            // Handle click on search field
+            searchEdit.setOnClickListener(v -> {
+                searchEdit.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(searchEdit, InputMethodManager.SHOW_IMPLICIT);
+            });
+
+            searchEdit.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    readSelectorAdapter.filter(s.toString());
+                }
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
+        } else {
+            // Reset search state when reusing the dialog
+            TextInputEditText searchEdit = bottomSheetDialog.findViewById(R.id.searchEdit);
+            if (searchEdit != null) {
+                searchEdit.setText("");
+                searchEdit.clearFocus();
+            }
+        }
+
+        viewModel.setPaused(true);
+        readSelectorAdapter.setReads(Objects.requireNonNull(viewModel.getReadList().getValue()));
+        bottomSheetDialog.show();
+    }
+
     private void animateText(TextView textView) {
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(textView, "alpha", 0f, 1f);
         fadeIn.setDuration(ANIMATION_DURATION);
@@ -228,6 +301,12 @@ public class LiveFeedActivity extends AppCompatActivity {
                 .build();
 
         imageAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), imageProxy -> {
+
+            if (Boolean.TRUE.equals(viewModel.getIsPaused().getValue())) {
+                imageProxy.close();
+                return;
+            }
+
             Bitmap bitmapBuffer = Bitmap.createBitmap(
                     imageProxy.getWidth(),
                     imageProxy.getHeight(),
