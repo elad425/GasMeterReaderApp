@@ -24,7 +24,6 @@ public class BuildingRepository {
     }
 
     public void reloadBuilding(){
-        db.buildingDao().clear();
         api.getReads();
     }
 

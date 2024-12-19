@@ -35,7 +35,6 @@ public class Api {
         call.enqueue(new Callback<List<Read>>() {
             @Override
             public void onResponse(@NonNull Call<List<Read>> call, @NonNull Response<List<Read>> response) {
-                dao.clear();
                 assert response.body() != null;
                 dao.insertList(assignReadsToBuildings(response.body()));
             }
