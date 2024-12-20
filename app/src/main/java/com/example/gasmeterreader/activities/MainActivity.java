@@ -20,6 +20,7 @@ import com.google.android.material.textview.MaterialTextView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private MainViewModel viewModel;
@@ -109,21 +110,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateBuildingsList(List<Building> buildings) {
-        if (buildings == null) return;
+        if (buildings == null) {
+            buildingListAdapter.updateBuildings(new ArrayList<>());
+            itemCounter.setText("0 מרכזיות");
+            return;
+        }
 
-        List<Building> displayList;
-        if (filterCheckbox.isChecked()) {
-            // Filter incomplete buildings
-            List<Building> filteredList = new ArrayList<>();
-            for (Building building : buildings) {
-                if (!building.isComplete()) {
-                    filteredList.add(building);
-                }
-            }
-            displayList = filteredList;
-        } else {
-            // Show all buildings
-            displayList = buildings;
+        List<Building> displayList = buildings;
+        if (filterCheckbox != null && filterCheckbox.isChecked()) {
+            displayList = buildings.stream()
+                    .filter(building -> !building.isComplete())
+                    .collect(Collectors.toList());
         }
 
         // Update the counter
