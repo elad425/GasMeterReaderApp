@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
@@ -68,6 +69,14 @@ public class LiveFeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_feed);
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
+        overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finish();
+                overridePendingTransition(R.animator.slide_in_left, R.animator.slide_out_right);
+            }
+        });
 
         initializeViewModel();
         initializeViews();
@@ -366,4 +375,5 @@ public class LiveFeedActivity extends AppCompatActivity {
         super.onDestroy();
         cameraExecutor.shutdown();
     }
+
 }

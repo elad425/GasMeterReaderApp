@@ -33,26 +33,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Set font scale and status bar
+        overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+        Configuration config = getResources().getConfiguration();
+        config.fontScale = 1.0f;
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
         setContentView(R.layout.activity_main);
+
         initializeUI();
         setupRecyclerView();
         setupObservers();
     }
 
     private void initializeUI() {
-        // Set font scale and status bar
-        Configuration config = getResources().getConfiguration();
-        config.fontScale = 1.0f;
-        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
 
-        // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        // Setup Toolbar
         setSupportActionBar(findViewById(R.id.topAppBar));
-
-        // Setup SwipeRefreshLayout
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
         filterCheckbox = findViewById(R.id.filterCheckbox);
         itemCounter = findViewById(R.id.itemCounter);
@@ -125,8 +123,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Update the counter
         itemCounter.setText(displayList.size() + " מרכזיות");
-
-        // Update the adapter
         buildingListAdapter.updateBuildings(displayList);
         swipeRefreshLayout.setRefreshing(false);
     }
