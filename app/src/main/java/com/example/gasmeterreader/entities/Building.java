@@ -63,7 +63,7 @@ public class Building {
 
     public void checkCompleted(){
         for (Read read : readList){
-            if (!read.isRead() || read.getCurrent_read() == 0) {
+            if (read.getCurrent_read() == 0) {
                 isComplete = false;
                 return;
             }
