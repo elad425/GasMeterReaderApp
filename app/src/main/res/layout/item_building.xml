@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:textSize="14sp"
-        android:layout_weight="4"/>
+        android:layout_weight="3"/>
 
     <TextView
         android:id="@+id/leftTodo"
@@ -73,5 +73,5 @@
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:textSize="14sp"
-        android:layout_weight="4"/>
+        android:layout_weight="3"/>
 </LinearLayout>

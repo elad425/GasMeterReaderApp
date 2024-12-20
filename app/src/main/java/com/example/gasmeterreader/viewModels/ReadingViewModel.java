@@ -102,6 +102,7 @@ public class ReadingViewModel extends AndroidViewModel {
                             currentReads.set(index, read);
                             reads.setValue(currentReads);
                             building.setReadList(reads.getValue());
+                            building.checkCompleted();
                             buildingRepository.updateBuilding(building);
                         }
                     }

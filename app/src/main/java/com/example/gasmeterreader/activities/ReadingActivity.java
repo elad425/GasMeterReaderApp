@@ -173,7 +173,11 @@ public class ReadingActivity extends AppCompatActivity {
         });
 
         viewModel.getCameraPermissionGranted().observe(this, granted -> {
-            if (granted) {
+            if(viewModel.getBuilding().isComplete()){
+                Toast.makeText(this,
+                        "כל הקריאות הושלמו",
+                        Toast.LENGTH_SHORT).show();
+            } else if (granted) {
                 startLiveFeedActivity();
             }
         });
@@ -333,7 +337,7 @@ public class ReadingActivity extends AppCompatActivity {
                         viewModel.setCameraPermissionGranted(true);
                     } else {
                         Toast.makeText(this,
-                                "Camera permission is required to use this feature",
+                                "דרוש הרשאות מצלמה",
                                 Toast.LENGTH_SHORT).show();
                     }
                 }

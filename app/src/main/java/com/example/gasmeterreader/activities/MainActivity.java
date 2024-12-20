@@ -13,15 +13,21 @@ import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.adapters.BuildingAdapter;
 import com.example.gasmeterreader.entities.Building;
 import com.example.gasmeterreader.viewModels.MainViewModel;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.textview.MaterialTextView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private MainViewModel viewModel;
     private BuildingAdapter buildingListAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ExtendedFloatingActionButton uploadFab;
+    private MaterialCheckBox filterCheckbox;  // Add this
+    private MaterialTextView itemCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +53,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Setup SwipeRefreshLayout
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+        filterCheckbox = findViewById(R.id.filterCheckbox);
+        itemCounter = findViewById(R.id.itemCounter);
+
         swipeRefreshLayout.setOnRefreshListener(this::handleRefresh);
+
+        filterCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            updateBuildingsList(Objects.requireNonNull(viewModel.getBuildings().getValue()));
+        });
 
         // Setup FAB
         setupFloatingActionButton();
@@ -96,7 +109,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateBuildingsList(List<Building> buildings) {
-        buildingListAdapter.updateBuildings(buildings);
+        if (buildings == null) return;
+
+        List<Building> displayList;
+        if (filterCheckbox.isChecked()) {
+            // Filter incomplete buildings
+            List<Building> filteredList = new ArrayList<>();
+            for (Building building : buildings) {
+                if (!building.isComplete()) {
+                    filteredList.add(building);
+                }
+            }
+            displayList = filteredList;
+        } else {
+            // Show all buildings
+            displayList = buildings;
+        }
+
+        // Update the counter
+        itemCounter.setText(displayList.size() + " מרכזיות");
+
+        // Update the adapter
+        buildingListAdapter.updateBuildings(displayList);
         swipeRefreshLayout.setRefreshing(false);
     }
 }

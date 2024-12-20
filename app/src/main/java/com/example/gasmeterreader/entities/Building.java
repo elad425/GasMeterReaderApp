@@ -61,6 +61,16 @@ public class Building {
         this.readList.add(read);
     }
 
+    public void checkCompleted(){
+        for (Read read : readList){
+            if (!read.isRead() || read.getCurrent_read() == 0) {
+                isComplete = false;
+                return;
+            }
+        }
+        this.isComplete = true;
+    }
+
     public int getLeftToDo(){
         int count = 0;
         for (Read read: readList){
