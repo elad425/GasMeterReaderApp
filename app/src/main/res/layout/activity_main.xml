@@ -55,7 +55,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginHorizontal="15dp"
                 android:gravity="center_vertical">
 
                 <com.google.android.material.textview.MaterialTextView
@@ -63,7 +62,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="20dp"
                     android:textSize="15sp"
                     android:text="15 בניינים"
                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
