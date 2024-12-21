@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.gasmeterreader.database.BuildingRepository;
+import com.example.gasmeterreader.room.BuildingRepository;
 import com.example.gasmeterreader.entities.Building;
 import java.util.List;
 
@@ -25,26 +25,20 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     private void loadBuildings() {
-        // Observe the repository's LiveData and update our MutableLiveData
-        buildingRepository.getAllBuildingsLive().observeForever(buildings -> {
-            buildingsLiveData.setValue(buildings);
-        });
+        buildingRepository.getAllBuildingsLive().observeForever(buildingsLiveData::setValue);
     }
 
     public void reloadBuildings() {
         buildingRepository.reloadBuilding();
-        // No need to call loadBuildings() as we're already observing changes
     }
 
     public void updateAllReadings() {
         buildingRepository.updateAllReadings();
-        // No need to call loadBuildings() as we're already observing changes
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        // Clean up the observer if needed
         buildingRepository.getAllBuildingsLive().removeObserver(buildings -> {});
     }
 }

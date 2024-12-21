@@ -6,7 +6,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.example.gasmeterreader.database.BuildingDao;
+import com.example.gasmeterreader.room.BuildingDao;
 import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.entities.Read;
 

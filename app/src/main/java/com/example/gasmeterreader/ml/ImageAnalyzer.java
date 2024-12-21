@@ -122,8 +122,4 @@ public class ImageAnalyzer {
         errorCount = 0;
     }
 
-    public void close(){
-        boxDetector.close();
-        digitsDetectorData.close();
-    }
 }

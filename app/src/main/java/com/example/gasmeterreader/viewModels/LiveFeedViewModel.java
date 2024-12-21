@@ -1,6 +1,5 @@
 package com.example.gasmeterreader.viewModels;
 
-
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.Handler;
@@ -12,7 +11,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.gasmeterreader.R;
-import com.example.gasmeterreader.database.BuildingRepository;
+import com.example.gasmeterreader.room.BuildingRepository;
 import com.example.gasmeterreader.entities.Building;
 import com.example.gasmeterreader.entities.Read;
 import com.example.gasmeterreader.ml.ImageAnalyzer;
@@ -21,8 +20,6 @@ import com.example.gasmeterreader.utils.StringsUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class LiveFeedViewModel extends AndroidViewModel {
 
@@ -40,13 +37,11 @@ public class LiveFeedViewModel extends AndroidViewModel {
     private Building building;
 
     private final ImageAnalyzer imageAnalyzer;
-    private final ExecutorService cameraExecutor;
     private final BuildingRepository buildingRepository;
 
     public LiveFeedViewModel(@NonNull Application application) {
         super(application);
         this.imageAnalyzer = new ImageAnalyzer(application);
-        this.cameraExecutor = Executors.newSingleThreadExecutor();
         this.buildingRepository = new BuildingRepository(application);
     }
 
@@ -168,9 +163,4 @@ public class LiveFeedViewModel extends AndroidViewModel {
         }
     }
 
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        cameraExecutor.shutdown();
-    }
 }

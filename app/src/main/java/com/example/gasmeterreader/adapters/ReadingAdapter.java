@@ -14,7 +14,6 @@ import com.example.gasmeterreader.viewModels.ReadingViewModel;
 import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.ReadViewHolder> {
     private List<Read> readList;

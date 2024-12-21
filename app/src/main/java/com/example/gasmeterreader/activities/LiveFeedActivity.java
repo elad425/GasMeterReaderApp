@@ -146,7 +146,6 @@ public class LiveFeedActivity extends AppCompatActivity {
         });
 
         viewModel.getIsFlashOn().observe(this, this::updateFlashState);
-
         viewModel.getErrorCount().observe(this, this::handleErrorCount);
     }
 
@@ -337,7 +336,6 @@ public class LiveFeedActivity extends AppCompatActivity {
 
             processCameraImage(imageProxy);
         });
-
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
         try {

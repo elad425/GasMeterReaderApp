@@ -48,19 +48,10 @@ public class StringsUtils {
     public static boolean hasMoreThanOneDot(String str) {
         int firstDot = str.indexOf('.');
         if (firstDot == -1) {
-            return false; // No dot found
+            return false;
         }
         int secondDot = str.indexOf('.', firstDot + 1);
-        return secondDot != -1; // Check if there's another dot
-    }
-
-    public static String fixId(String input) {
-        input = input.replaceFirst("^0+", "");
-        int dashIndex = input.indexOf("Line");
-        if (dashIndex != -1) {
-            input = input.substring(dashIndex + 4);
-        }
-        return input;
+        return secondDot != -1;
     }
 
     public static String fixData(String input, String check) {

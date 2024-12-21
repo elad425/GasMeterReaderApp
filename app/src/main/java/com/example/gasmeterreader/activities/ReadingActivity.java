@@ -112,18 +112,15 @@ public class ReadingActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        // Add keyboard action listener to move to next read
         currentReadInput.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE ||
                     actionId == EditorInfo.IME_ACTION_NEXT) {
-                // Get the current list of reads
                 List<Read> currentReads = viewModel.getReads().getValue();
                 Read currentSelectedRead = viewModel.getSelectedRead().getValue();
 
                 if (currentReads != null && currentSelectedRead != null) {
                     int currentIndex = currentReads.indexOf(currentSelectedRead);
 
-                    // If there's a next read, select it
                     if (currentIndex < currentReads.size() - 1) {
                         Read nextRead = currentReads.get(currentIndex + 1);
                         viewModel.setSelectedRead(nextRead);
@@ -138,7 +135,6 @@ public class ReadingActivity extends AppCompatActivity {
             return false;
         });
 
-        // Observe changes to the current read input
         viewModel.getCurrentReadInput().observe(this, input -> {
             if (input != null && !input.equals(Objects.requireNonNull(currentReadInput.getText()).toString())) {
                 isUpdatingInput = true;
@@ -148,7 +144,6 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
-        // Update input field when selected read changes
         viewModel.getSelectedRead().observe(this, read -> {
             if (read != null) {
                 String currentValue = read.getCurrent_read() != 0 ?
@@ -219,7 +214,6 @@ public class ReadingActivity extends AppCompatActivity {
     }
 
     private void toggleSearchIcon() {
-        // Create rotation animation
         float startDegrees = isSearchIconClose ? 180f : 0f;
         float endDegrees = isSearchIconClose ? 360f : 180f;
 
@@ -230,8 +224,6 @@ public class ReadingActivity extends AppCompatActivity {
         );
         rotateAnimation.setDuration(200);
         rotateAnimation.setFillAfter(true);
-
-        // Set animation listener to change the icon at the middle of the rotation
         rotateAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {}
@@ -243,13 +235,9 @@ public class ReadingActivity extends AppCompatActivity {
             public void onAnimationRepeat(Animation animation) {}
         });
 
-        // Start the animation
         searchButton.startAnimation(rotateAnimation);
-
-        // Change the icon
         searchButton.setImageResource(isSearchIconClose ?
                 R.drawable.ic_search : R.drawable.ic_close);
-
         isSearchIconClose = !isSearchIconClose;
     }
 
@@ -295,10 +283,8 @@ public class ReadingActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         lstReadings.setLayoutManager(layoutManager);
 
-        // Observe reads
         viewModel.getReads().observe(this, reads -> {
             readingAdapter.updateReadings(reads);
-            // If no read is currently selected and there are reads, select the first unread
             if (viewModel.getSelectedRead().getValue() == null && !reads.isEmpty()) {
                 for (Read read : reads) {
                     if (!read.isRead()) {
@@ -306,28 +292,21 @@ public class ReadingActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                // If all reads are read, select the first one
                 if (viewModel.getSelectedRead().getValue() == null) {
                     viewModel.setSelectedRead(reads.get(0));
                 }
             }
         });
 
-        // Observe selected read to update RecyclerView and scroll position
         viewModel.getSelectedRead().observe(this, selectedRead -> {
             if (selectedRead != null && readingAdapter != null) {
                 readingAdapter.notifyDataSetChanged();
-
-                // Update read counter
                 List<Read> currentReads = viewModel.getReads().getValue();
+
                 if (currentReads != null) {
                     int position = currentReads.indexOf(selectedRead);
                     readCounterText.setText(String.format("(%d/%d)", position + 1, currentReads.size()));
-
-                    // Find the position of the selected read
                     int lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
-
-                    // If the selected read is not in the visible area, scroll to show it at the bottom
                     int totalItemCount = layoutManager.getItemCount();
                     if (position < lastVisibleItemPosition - 1 || position > lastVisibleItemPosition) {
                         lstReadings.scrollToPosition(Math.min(position, totalItemCount - 1));

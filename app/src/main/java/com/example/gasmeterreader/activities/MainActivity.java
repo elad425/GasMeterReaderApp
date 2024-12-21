@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel viewModel;
     private BuildingAdapter buildingListAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private Chip filterCheckbox;  // Add this
+    private Chip filterCheckbox;
     private MaterialTextView itemCounter;
     private TextView totalRemaining;
     private TextView totalCompleted;
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set font scale and status bar
+
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         Configuration config = getResources().getConfiguration();
         config.fontScale = 1.0f;
@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
             total += building.getReadList().size();
         }
 
-        // Update the counter
         itemCounter.setText(displayList.size() + " מרכזיות");
         buildingListAdapter.updateBuildings(displayList);
         swipeRefreshLayout.setRefreshing(false);

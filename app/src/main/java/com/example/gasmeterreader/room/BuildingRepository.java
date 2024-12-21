@@ -1,4 +1,4 @@
-package com.example.gasmeterreader.database;
+package com.example.gasmeterreader.room;
 
 import android.app.Application;
 

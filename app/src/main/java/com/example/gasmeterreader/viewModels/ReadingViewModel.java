@@ -6,7 +6,7 @@ import android.widget.Toast;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.gasmeterreader.database.BuildingRepository;
+import com.example.gasmeterreader.room.BuildingRepository;
 import com.example.gasmeterreader.entities.Building;
 import com.example.gasmeterreader.entities.Read;
 import static com.example.gasmeterreader.utils.EntityUtils.sortReadsByOrder;
@@ -30,8 +30,6 @@ public class ReadingViewModel extends AndroidViewModel {
             building = buildingRepository.getBuildingByCenter(buildingCenter);
             List<Read> readList = building.getReadList();
             reads.setValue(sortReadsByOrder(readList));
-
-            // Select the first unread read when loading
             selectFirstUnreadRead();
         }
     }
@@ -39,10 +37,8 @@ public class ReadingViewModel extends AndroidViewModel {
     private void selectFirstUnreadRead() {
         List<Read> readList = reads.getValue();
         if (readList != null && !readList.isEmpty()) {
-            // Always prefer the first item
             setSelectedRead(readList.get(0));
 
-            // If there are unread reads, try to select the first unread
             for (Read read : readList) {
                 if (!read.isRead() || read.getCurrent_read() == 0) {
                     setSelectedRead(read);
