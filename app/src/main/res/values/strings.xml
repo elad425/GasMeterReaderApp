@@ -8,7 +8,7 @@
     <string name="open_camera">open camera</string>
     <string name="open_live_stream">open live stream</string>
     <string name="data">data:</string>
-    <string name="baseUrl">http://192.168.68.120:3000</string>
+    <string name="baseUrl">http://192.168.68.104:3000</string>
     <string name="search">search</string>
     <string name="dot">•</string>
 </resources>

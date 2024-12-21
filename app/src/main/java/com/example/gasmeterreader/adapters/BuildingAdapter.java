@@ -41,7 +41,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
         Building building = buildingsList.get(position);
         holder.street.setText(String.format("%s %d", building.getAddress(), building.getBuildingNumber()));
         holder.center.setText(String.format("%d",building.getCenter()));
-        holder.leftTodo.setText(String.format("%d",building.getLeftToDo()));
+        holder.leftTodo.setText(String.format("%d",building.getCompleted()));
         holder.total.setText(String.format("%d",building.getReadList().size()));
         holder.city.setText(String.format("%s",building.getCity()));
 

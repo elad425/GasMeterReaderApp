@@ -71,7 +71,7 @@ public class Building {
         this.isComplete = true;
     }
 
-    public int getLeftToDo(){
+    public int getCompleted(){
         int count = 0;
         for (Read read: readList){
             if(read.getCurrent_read() != 0){

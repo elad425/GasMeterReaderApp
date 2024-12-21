@@ -55,13 +55,14 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
         setContentView(R.layout.activity_reading);
-        overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 finish();
-                overridePendingTransition(R.animator.slide_in_left, R.animator.slide_out_right);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
 
@@ -73,8 +74,6 @@ public class ReadingActivity extends AppCompatActivity {
         setupCurrentReadInput();
         setupNavigationButtons();
         setupSearch();
-
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
     }
 
     private void initializeViews() {
