@@ -63,7 +63,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="10dp"
                     android:textSize="15sp"
                     android:text="15 בניינים"
                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
@@ -72,9 +72,10 @@
                     android:id="@+id/filterCheckbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
                     android:text="סנן הושלמו"
                     android:checkable="true"
-                    style="@style/Widget.Material3.Chip.Filter"/>
+                    style="@style/Widget.Material3.Chip.Filter.Elevated"/>
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
@@ -82,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                app:cardElevation="2dp"
+                app:cardElevation="1dp"
                 app:cardCornerRadius="8dp"
                 app:cardBackgroundColor="?attr/colorSurfaceVariant">
 
@@ -153,7 +154,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:cardElevation="2dp"
+            app:cardElevation="1dp"
             app:cardCornerRadius="8dp"
             app:cardBackgroundColor="?attr/colorSurfaceVariant">
 
