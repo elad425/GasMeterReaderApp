@@ -9,6 +9,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
@@ -35,6 +37,7 @@ import com.example.gasmeterreader.R;
 import com.example.gasmeterreader.adapters.ReadSelectorAdapter;
 import com.example.gasmeterreader.entities.Read;
 import com.example.gasmeterreader.viewModels.LiveFeedViewModel;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -50,8 +53,7 @@ public class LiveFeedActivity extends AppCompatActivity {
 
     private PreviewView previewView;
     private MaterialButton flashButton;
-    private MaterialButton nextButton;
-    private MaterialButton selectReadButton;
+    private MaterialButton confirmButton;
     private MaterialButton resetReadButton;
     private TextView dataResultText;
     private ImageView detectionStatusIcon;
@@ -64,6 +66,10 @@ public class LiveFeedActivity extends AppCompatActivity {
     private ReadSelectorAdapter readSelectorAdapter;
     private BottomSheetDialog bottomSheetDialog;
     private ExecutorService cameraExecutor;
+
+    private static final float SWIPE_THRESHOLD = 100f;
+    private float touchStartY;
+    private View swipeIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,37 +100,35 @@ public class LiveFeedActivity extends AppCompatActivity {
     private void initializeViews() {
         previewView = findViewById(R.id.viewFinder);
         flashButton = findViewById(R.id.flashButton);
-        nextButton = findViewById(R.id.reset);
+        confirmButton = findViewById(R.id.confirmReadButton);
         dataResultText = findViewById(R.id.dataResultText);
         detectionStatusIcon = findViewById(R.id.detectionStatusIcon);
         serialText = findViewById(R.id.serial);
         apartmentText = findViewById(R.id.apartment);
         lastReadText = findViewById(R.id.lastRead);
-        selectReadButton = findViewById(R.id.selectReadButton);
         resetReadButton = findViewById(R.id.resetReadButton);
+        swipeIndicator = findViewById(R.id.swipeIndicator);
 
         setupButtonListeners();
     }
 
     private void setupButtonListeners() {
-        selectReadButton.setOnClickListener(v -> {
-            animateButton(selectReadButton);
-            showReadSelector();
-        });
-
         flashButton.setOnClickListener(v -> {
             animateButton(flashButton);
             viewModel.toggleFlash();
         });
 
-        nextButton.setOnClickListener(v -> {
-            animateButton(nextButton);
+        confirmButton.setOnClickListener(v -> {
+            animateButton(confirmButton);
             viewModel.enterRead();
-            viewModel.nextRead();
-            viewModel.resetError();
         });
 
-        resetReadButton.setOnClickListener(v -> viewModel.resetDetection());
+        resetReadButton.setOnClickListener(v -> {
+            animateButton(resetReadButton);
+            viewModel.resetDetection();
+        });
+
+        previewView.setOnTouchListener(this::onTouch);
     }
 
     private void setupObservers() {
@@ -209,6 +213,27 @@ public class LiveFeedActivity extends AppCompatActivity {
         View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_read_selector, null);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.setOnDismissListener(dialog -> viewModel.setPaused(false));
+
+        View bottomSheet = bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        if (bottomSheet != null) {
+            BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
+            behavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                @Override
+                public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        bottomSheetDialog.dismiss();
+                        viewModel.setPaused(false);
+                    }
+                }
+
+                @Override
+                public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                    // Optional: animate the swipe indicator based on slide offset
+                    swipeIndicator.setAlpha(1 - slideOffset);
+                }
+            });
+            behavior.setHideable(true);
+        }
 
         setupRecyclerView(bottomSheetView);
         setupSearchField(bottomSheetView);
@@ -378,4 +403,22 @@ public class LiveFeedActivity extends AppCompatActivity {
         cameraExecutor.shutdown();
     }
 
+    private boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                touchStartY = event.getY();
+                return true;
+            case MotionEvent.ACTION_UP:
+                float deltaY = touchStartY - event.getY();
+                if (Math.abs(deltaY) > SWIPE_THRESHOLD) {
+                    if (deltaY > 0) {
+                        showReadSelector();
+                    } else if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
+                        bottomSheetDialog.dismiss();
+                    }
+                }
+                return true;
+        }
+        return false;
+    }
 }

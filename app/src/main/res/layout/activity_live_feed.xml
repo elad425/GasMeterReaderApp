@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             app:cardBackgroundColor="#80000000"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="30dp"
             app:cardElevation="0dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -126,50 +126,87 @@
         android:layout_gravity="bottom"
         android:layout_margin="16dp"
         app:cardBackgroundColor="#80000000"
-        app:cardCornerRadius="16dp"
+        app:cardCornerRadius="30dp"
         app:cardElevation="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="10dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/resetReadButton"
+            <LinearLayout
+                android:id="@+id/swipeIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="אפס קריאה"
-                android:textColor="@android:color/black"
-                app:cornerRadius="24dp"
-                android:backgroundTint="@android:color/white"
+                android:orientation="vertical"
+                android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/selectReadButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="בחר קריאה"
-                android:textColor="@android:color/black"
-                app:cornerRadius="24dp"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="@android:color/white"
-                app:layout_constraintEnd_toStartOf="@id/reset"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/reset"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="הבא"
-                android:textColor="@android:color/black"
-                app:cornerRadius="24dp"
-                android:backgroundTint="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toTopOf="@id/buttonContainer">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="swipe up"
+                    android:src="@drawable/ic_keyboard_arrow_up"
+                    app:tint="@android:color/white"/>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="החלק למעלה לבחירת קריאה"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"
+                    android:padding="4dp"/>
+            </LinearLayout>
+
+            <!-- Button container -->
+                <LinearLayout
+                    android:id="@+id/buttonContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <!-- Reset Read Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/resetReadButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="אפס קריאה"
+                        android:textColor="@android:color/white"
+                        app:cornerRadius="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:backgroundTint="#FF5252"
+                        app:icon="@drawable/ic_refresh"
+                        app:iconGravity="textStart"
+                        app:iconTint="@android:color/white"
+                        android:padding="12dp"
+                        android:elevation="4dp"
+                        app:rippleColor="#80FFFFFF"/>
+
+                    <!-- Confirm Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/confirmReadButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="אשר קריאה"
+                        android:textColor="@android:color/white"
+                        app:cornerRadius="24dp"
+                        android:layout_marginStart="8dp"
+                        android:backgroundTint="#4CAF50"
+                        app:icon="@drawable/ic_check_circle"
+                        app:iconGravity="textStart"
+                        app:iconTint="@android:color/white"
+                        android:padding="12dp"
+                        android:elevation="4dp"
+                        app:rippleColor="#80FFFFFF"/>
+
+                </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -145,6 +146,11 @@ public class LiveFeedViewModel extends AndroidViewModel {
     }
 
     public void enterRead(){
+        if(Objects.equals(dataResultText.getValue(), "מחפש..")){
+            Toast.makeText(getApplication(), "לא נמצאה קריאה", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if(listPlace.getValue() != null) {
             List<Read> temp = reads.getValue();
             assert temp != null;
@@ -155,6 +161,8 @@ public class LiveFeedViewModel extends AndroidViewModel {
                 reads.setValue(temp);
                 building.setReadList(temp);
                 buildingRepository.updateBuilding(building);
+                nextRead();
+                resetError();
             } else{
                 incrementListPlace();
             }
