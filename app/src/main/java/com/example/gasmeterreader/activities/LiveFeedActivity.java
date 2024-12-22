@@ -117,8 +117,10 @@ public class LiveFeedActivity extends AppCompatActivity {
 
         nextButton.setOnClickListener(v -> {
             animateButton(nextButton);
+            viewModel.enterRead();
             viewModel.nextRead();
             viewModel.resetError();
+
         });
     }
 
@@ -141,7 +143,6 @@ public class LiveFeedActivity extends AppCompatActivity {
             if (Boolean.TRUE.equals(isDetected)) {
                 animateDetection();
                 triggerVibration();
-                viewModel.enterRead();
             }
         });
 
