@@ -3,11 +3,11 @@
     <color name="black">#FFFFFFFF</color>
     <color name="white">#FF000000</color>
     <color name="transparent">#00FFFFFF</color>
-    <color name="selectedRead">#e1eeff</color>
-    <color name="readDone">#98B4D4</color>
-    <color name="readDoneSelected">#C4E0FF</color>
-    <color name="readBackground">#eff6ff</color>
-    <color name="readNotValid">#ff6767</color>
-    <color name="readNotValidSelected">#ff9999</color>
+    <color name="selectedRead">#F4F9FF</color>
+    <color name="readDone">#8DD190</color>
+    <color name="readDoneSelected">#BADBBC</color>
+    <color name="readBackground">#B2E0EDFF</color>
+    <color name="readNotValid">#FF9A9A</color>
+    <color name="readNotValidSelected">#FFC0C0</color>
     <color name="floatingButtonLiveFeed">#67c5ff</color>
 </resources>

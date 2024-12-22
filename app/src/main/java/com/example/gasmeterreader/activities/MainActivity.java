@@ -36,16 +36,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        initialWindow();
+        initializeUI();
+        setupRecyclerView();
+        setupObservers();
+    }
+
+    private void initialWindow(){
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         Configuration config = getResources().getConfiguration();
         config.fontScale = 1.0f;
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
         setContentView(R.layout.activity_main);
-
-        initializeUI();
-        setupRecyclerView();
-        setupObservers();
     }
 
     private void initializeUI() {
