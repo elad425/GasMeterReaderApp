@@ -310,7 +310,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="@string/open_live_stream"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_video"
         android:backgroundTint="@color/floatingButtonLiveFeed"
