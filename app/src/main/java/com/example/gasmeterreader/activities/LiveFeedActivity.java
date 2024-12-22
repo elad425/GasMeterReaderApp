@@ -52,6 +52,7 @@ public class LiveFeedActivity extends AppCompatActivity {
     private MaterialButton flashButton;
     private MaterialButton nextButton;
     private MaterialButton selectReadButton;
+    private MaterialButton resetReadButton;
     private TextView dataResultText;
     private ImageView detectionStatusIcon;
     private TextView serialText;
@@ -100,6 +101,7 @@ public class LiveFeedActivity extends AppCompatActivity {
         apartmentText = findViewById(R.id.apartment);
         lastReadText = findViewById(R.id.lastRead);
         selectReadButton = findViewById(R.id.selectReadButton);
+        resetReadButton = findViewById(R.id.resetReadButton);
 
         setupButtonListeners();
     }
@@ -120,8 +122,9 @@ public class LiveFeedActivity extends AppCompatActivity {
             viewModel.enterRead();
             viewModel.nextRead();
             viewModel.resetError();
-
         });
+
+        resetReadButton.setOnClickListener(v -> viewModel.resetDetection());
     }
 
     private void setupObservers() {

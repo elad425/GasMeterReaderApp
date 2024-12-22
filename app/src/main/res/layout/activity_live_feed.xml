@@ -106,6 +106,18 @@
         </com.google.android.material.card.MaterialCardView>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- Data Result Text -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/dataResultText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="100dp"
+        android:textColor="@android:color/white"
+        android:textSize="32sp"
+        android:padding="16dp"
+        android:background="#80000000"/>
+
     <!-- Bottom Controls -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottomControls"
@@ -122,27 +134,15 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/dataResultText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:layout_marginEnd="15dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/selectReadButton"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/reset"
+                android:id="@+id/resetReadButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="הבא"
+                android:text="אפס קריאה"
                 android:textColor="@android:color/black"
                 app:cornerRadius="24dp"
                 android:backgroundTint="@android:color/white"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
@@ -156,6 +156,18 @@
                 android:layout_marginEnd="8dp"
                 android:backgroundTint="@android:color/white"
                 app:layout_constraintEnd_toStartOf="@id/reset"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="הבא"
+                android:textColor="@android:color/black"
+                app:cornerRadius="24dp"
+                android:backgroundTint="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
