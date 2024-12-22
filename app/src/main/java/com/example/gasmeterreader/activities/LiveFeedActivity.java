@@ -121,6 +121,10 @@ public class LiveFeedActivity extends AppCompatActivity {
         confirmButton.setOnClickListener(v -> {
             animateButton(confirmButton);
             viewModel.enterRead();
+            if (viewModel.getBuilding().isComplete()){
+                Toast.makeText(this, "כל הקריאות הושלמו", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         });
 
         resetReadButton.setOnClickListener(v -> {

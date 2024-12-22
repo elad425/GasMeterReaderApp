@@ -54,6 +54,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
     public LiveData<Integer> getErrorCount() { return errorCount; }
     public LiveData<List<Read>> getReadList() { return reads; }
     public LiveData<Boolean> getIsPaused() { return isPaused;}
+    public Building getBuilding() { return building; }
 
     public void processImage(Bitmap rotatedBitmap) {
         if (Boolean.FALSE.equals(isDetected.getValue()) && getListPlace().getValue() != null) {
@@ -160,6 +161,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
                 temp.get(listPlace.getValue()).wasRead();
                 reads.setValue(temp);
                 building.setReadList(temp);
+                building.checkCompleted();
                 buildingRepository.updateBuilding(building);
                 nextRead();
                 resetError();

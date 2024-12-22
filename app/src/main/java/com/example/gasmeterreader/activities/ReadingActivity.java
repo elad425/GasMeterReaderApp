@@ -70,13 +70,17 @@ public class ReadingActivity extends AppCompatActivity {
     }
 
     private void initialWindow(){
-
         getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        boolean isDarkMode = (nightModeFlags == Configuration.UI_MODE_NIGHT_YES);
+        View decorView = getWindow().getDecorView();
+        int flags = decorView.getSystemUiVisibility();
 
+        if (isDarkMode) {flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;}
+        else {flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;}
+        decorView.setSystemUiVisibility(flags);
         setContentView(R.layout.activity_reading);
 
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
