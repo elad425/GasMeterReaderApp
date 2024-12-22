@@ -25,7 +25,8 @@
             android:layout_margin="16dp"
             app:cardBackgroundColor="#80000000"
             app:cardCornerRadius="30dp"
-            app:cardElevation="0dp">
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -127,7 +128,8 @@
         android:layout_margin="16dp"
         app:cardBackgroundColor="#80000000"
         app:cardCornerRadius="30dp"
-        app:cardElevation="0dp">
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
