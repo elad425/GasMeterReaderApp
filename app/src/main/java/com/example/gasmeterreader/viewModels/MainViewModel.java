@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.gasmeterreader.room.BuildingRepository;
 import com.example.gasmeterreader.entities.Building;
+
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {

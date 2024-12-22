@@ -3,9 +3,12 @@ package com.example.gasmeterreader.adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,6 +47,11 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
         holder.leftTodo.setText(String.format("%d",building.getCompleted()));
         holder.total.setText(String.format("%d",building.getReadList().size()));
         holder.city.setText(String.format("%s",building.getCity()));
+        holder.isComplete.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+
+        if (building.isComplete()){
+            holder.isComplete.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+        }
 
         holder.itemView.setOnClickListener(v -> {
             Building clickedBuildingItem = buildingsList.get(holder.getAdapterPosition());
@@ -71,6 +79,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
         TextView leftTodo;
         TextView city;
         TextView total;
+        View isComplete;
 
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +88,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
             leftTodo = itemView.findViewById(R.id.leftTodo);
             city = itemView.findViewById(R.id.city);
             total = itemView.findViewById(R.id.total);
+            isComplete = itemView.findViewById(R.id.statusIndicator);
         }
     }
 }

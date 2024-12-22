@@ -6,7 +6,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -92,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<Building> displayList = buildings;
+        displayList.sort((b1, b2) -> Boolean.compare(b1.isComplete(), b2.isComplete()));
         if (filterCheckbox != null && filterCheckbox.isChecked()) {
             displayList = buildings.stream()
                     .filter(building -> !building.isComplete())

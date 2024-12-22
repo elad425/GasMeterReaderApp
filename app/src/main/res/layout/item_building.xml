@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
+    <View
+        android:id="@+id/statusIndicator"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/status_indicator_background"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_weight="1"
-        android:padding="15dp">
+        android:padding="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 tools:text="Username" />
 
             <TextView
@@ -40,7 +48,7 @@
                 android:id="@+id/city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
+                android:textSize="12sp"
                 android:textColor="@android:color/darker_gray"
                 tools:text="today" />
         </LinearLayout>
@@ -50,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textSize="12sp"
+            android:textSize="13sp"
             tools:text="This is a sample comment." />
 
     </LinearLayout>
@@ -59,19 +67,23 @@
         android:id="@+id/total"
         android:padding="5dp"
         android:layout_marginTop="15dp"
+        android:layout_marginStart="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:textSize="14sp"
-        android:layout_weight="3"/>
+        android:layout_weight="2"
+        android:gravity="center_horizontal"/>
 
     <TextView
         android:id="@+id/leftTodo"
         android:padding="5dp"
         android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:textSize="14sp"
-        android:layout_weight="3"/>
+        android:layout_weight="2"
+        android:gravity="center_horizontal"/>
 </LinearLayout>
