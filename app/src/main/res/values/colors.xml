@@ -6,7 +6,7 @@
     <color name="selectedRead">#F4F9FF</color>
     <color name="readDone">#8DD190</color>
     <color name="readDoneSelected">#BADBBC</color>
-    <color name="readBackground">#B2E0EDFF</color>
+    <color name="readBackground">#B2D7E8FF</color>
     <color name="readNotValid">#FF9A9A</color>
     <color name="readNotValidSelected">#FFC0C0</color>
     <color name="floatingButtonLiveFeed">#67c5ff</color>
