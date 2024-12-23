@@ -191,7 +191,6 @@ public class LiveFeedActivity extends AppCompatActivity {
                     String enteredNumber = input.getText().toString();
                     if (!enteredNumber.isEmpty()) {
                         viewModel.setReadManual(enteredNumber);
-                        viewModel.incrementListPlace();
                     }
                     viewModel.setPaused(false);
                 })
@@ -235,7 +234,6 @@ public class LiveFeedActivity extends AppCompatActivity {
 
                 @Override
                 public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                    // Optional: animate the swipe indicator based on slide offset
                     swipeIndicator.setAlpha(1 - slideOffset);
                 }
             });

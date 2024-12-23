@@ -93,9 +93,20 @@ public class LiveFeedViewModel extends AndroidViewModel {
     }
 
     public void setReadManual(String read){
-        dataResultText.setValue(read);
-        isDetected.setValue(Boolean.TRUE);
-        isDetected.setValue(Boolean.FALSE);
+        if(listPlace.getValue() != null) {
+            List<Read> temp = reads.getValue();
+            assert temp != null;
+            temp.get(listPlace.getValue()).setCurrent_read(Double.parseDouble(
+                    Objects.requireNonNull(read)));
+            temp.get(listPlace.getValue()).wasRead();
+            reads.setValue(temp);
+            building.setReadList(temp);
+            building.checkCompleted();
+            buildingRepository.updateBuilding(building);
+            nextRead();
+            resetError();
+            incrementListPlace();
+        }
     }
 
     public void nextRead() {
