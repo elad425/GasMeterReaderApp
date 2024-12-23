@@ -35,30 +35,31 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/flashButton"
+                    style="@style/Widget.Material3.Button.IconButton"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:insetLeft="0dp"
                     android:insetTop="0dp"
                     android:insetRight="0dp"
                     android:insetBottom="0dp"
+                    app:cornerRadius="24dp"
                     app:icon="@drawable/ic_flash_on"
                     app:iconGravity="textStart"
                     app:iconPadding="0dp"
                     app:iconTint="@android:color/white"
-                    app:cornerRadius="24dp"
-                    style="@style/Widget.Material3.Button.IconButton"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <LinearLayout
                     android:id="@+id/textContainer"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="5dp"
                     app:layout_constraintStart_toEndOf="@id/flashButton"
-                    app:layout_constraintEnd_toStartOf="@id/lastRead"
+                    app:layout_constraintEnd_toStartOf="@id/readingContainer"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
 
@@ -67,52 +68,65 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:textSize="20sp"
-                        android:textStyle="bold"/>
+                        android:textSize="25sp"
+                        android:textStyle="bold" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/serial"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:textSize="15sp"
-                        android:layout_marginTop="4dp"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/lastRead"
+                <LinearLayout
+                    android:id="@+id/readingContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginHorizontal="8dp"
-                    app:layout_constraintStart_toEndOf="@id/textContainer"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginTop="4dp"
                     app:layout_constraintEnd_toStartOf="@id/detectionStatusIcon"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/lastReadIndicate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="קריאה אחרונה"
+                        android:textColor="@android:color/white"
+                        android:textSize="11sp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/lastRead"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:textSize="28sp" />
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/detectionStatusIcon"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:layout_marginEnd="5dp"
-                    android:contentDescription="detection status"
+                    android:layout_marginEnd="10dp"
                     android:src="@drawable/ic_redx"
+                    android:contentDescription="detection status"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Data Result Text -->
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/dataResultText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="100dp"
         android:textColor="@android:color/white"
         android:textSize="32sp"

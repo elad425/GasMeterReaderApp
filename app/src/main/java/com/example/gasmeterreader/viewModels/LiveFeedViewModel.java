@@ -123,8 +123,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
         detectionCounterData.clear();
         isDetected.setValue(false);
         imageAnalyzer.deleteDataDetect();
-        errorCount.setValue(0);
-        imageAnalyzer.resetError();
+        resetError();
     }
 
     public void resetError(){

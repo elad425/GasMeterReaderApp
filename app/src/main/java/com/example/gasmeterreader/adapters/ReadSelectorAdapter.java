@@ -50,6 +50,8 @@ public class ReadSelectorAdapter extends RecyclerView.Adapter<ReadSelectorAdapte
             holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readDone));
         } else if (!Objects.equals(read.getUser_status(), null)) {
             holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readNotValid));
+        } else {
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readBackground));
         }
 
         holder.itemView.setOnClickListener(v -> {
