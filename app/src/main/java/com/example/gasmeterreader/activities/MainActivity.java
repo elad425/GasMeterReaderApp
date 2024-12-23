@@ -1,5 +1,7 @@
 package com.example.gasmeterreader.activities;
 
+import static com.example.gasmeterreader.utils.EntityUtils.sortBuildings;
+
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.widget.ImageButton;
@@ -91,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<Building> displayList = buildings;
-        displayList.sort((b1, b2) -> Boolean.compare(b1.isComplete(), b2.isComplete()));
+        sortBuildings(displayList);
         if (filterCheckbox != null && filterCheckbox.isChecked()) {
             displayList = buildings.stream()
                     .filter(building -> !building.isComplete())

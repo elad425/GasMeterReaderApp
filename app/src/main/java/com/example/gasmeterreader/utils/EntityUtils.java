@@ -39,4 +39,18 @@ public class EntityUtils {
         return sortedReads;
     }
 
+    public static void sortBuildings(List<Building> buildings) {
+        buildings.sort((b1, b2) -> {
+            int completeComparison = Boolean.compare(b1.isComplete(), b2.isComplete());
+            if (completeComparison != 0) {
+                return completeComparison;
+            }
+            int addressComparison = b1.getAddress().compareToIgnoreCase(b2.getAddress());
+            if (addressComparison != 0) {
+                return addressComparison;
+            }
+            return Integer.compare(b1.getBuildingNumber(), b2.getBuildingNumber());
+        });
+    }
+
 }
