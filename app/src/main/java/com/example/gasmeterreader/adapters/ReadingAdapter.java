@@ -89,6 +89,16 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.ReadView
                 viewModel.setSelectedRead(filteredList.get(position));
             }
         });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            if (position < filteredList.size()) {
+                Read read = filteredList.get(position);
+                viewModel.resetRead(read);
+                notifyItemChanged(position);
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override

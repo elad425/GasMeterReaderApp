@@ -3,7 +3,7 @@ package com.example.gasmeterreader.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StringsUtils {
+public class ResultUtils {
     public static void addString(String input, HashMap<String, Integer> dic) {
         if(input.length() > 3) {
             if (dic.containsKey(input)) {
@@ -68,7 +68,7 @@ public class StringsUtils {
                     String modifiedInput = insertDot(input, i);
                     try {
                         double inputValue = Double.parseDouble(modifiedInput);
-                        if (inputValue >= checkValue && inputValue - checkValue <= 30) {
+                        if (checkInRange(inputValue, checkValue)) {
                             if (i == 3) {
                                 return modifiedInput.substring(0, modifiedInput.length() - 1);
                             } else return modifiedInput;
@@ -83,8 +83,7 @@ public class StringsUtils {
             try {
                 double inputDouble = Double.parseDouble(input);
                 double checkDouble = Double.parseDouble(check);
-                if (inputDouble >= checkDouble
-                        && inputDouble - checkDouble <= 30) {
+                if (checkInRange(inputDouble, checkDouble)) {
                     if (input.indexOf('.') == input.length() - 4){
                         return input.substring(0, input.length() - 1);
                     } else return input;
@@ -94,6 +93,10 @@ public class StringsUtils {
             }
         }
         return "None";
+    }
+
+    public static boolean checkInRange(double inputDouble, double checkDouble){
+        return inputDouble >= checkDouble && inputDouble - checkDouble <= 30;
     }
 
 }

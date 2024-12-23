@@ -101,6 +101,10 @@ public class Read {
         return isRead;
     }
 
+    public void unRead(){
+        isRead = false;
+    }
+
     public void wasRead() {
         isRead = true;
     }

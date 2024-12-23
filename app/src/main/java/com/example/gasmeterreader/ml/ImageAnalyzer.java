@@ -4,7 +4,7 @@ import static com.example.gasmeterreader.utils.BitmapUtils.convertToGrayscale;
 import static com.example.gasmeterreader.utils.BitmapUtils.cropBitmap;
 import static com.example.gasmeterreader.utils.BitmapUtils.mapToOriginalImage;
 import static com.example.gasmeterreader.utils.BitmapUtils.placeOnGrayCanvas;
-import static com.example.gasmeterreader.utils.StringsUtils.fixData;
+import static com.example.gasmeterreader.utils.ResultUtils.fixData;
 
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -16,7 +16,7 @@ import com.example.gasmeterreader.room.BuildingRepository;
 import com.example.gasmeterreader.entities.Building;
 import com.example.gasmeterreader.entities.Read;
 import com.example.gasmeterreader.ml.ImageAnalyzer;
-import com.example.gasmeterreader.utils.StringsUtils;
+import com.example.gasmeterreader.utils.ResultUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -68,10 +68,10 @@ public class LiveFeedViewModel extends AndroidViewModel {
     private void updateResultTexts(final String dataResult) {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (!dataResult.isEmpty()) {
-                StringsUtils.addString(dataResult, detectionCounterData);
+                ResultUtils.addString(dataResult, detectionCounterData);
             }
 
-            if (StringsUtils.getMaxCount(detectionCounterData) >= detectionThreshold){
+            if (ResultUtils.getMaxCount(detectionCounterData) >= detectionThreshold){
                 isDetected.setValue(Boolean.TRUE);
             }
             updateDetectionStatus();
@@ -87,7 +87,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
             );
 
             dataResultText.setValue(String.format("%s",
-                    StringsUtils.getMostFrequentString(detectionCounterData)));
+                    ResultUtils.getMostFrequentString(detectionCounterData)));
 
         });
     }

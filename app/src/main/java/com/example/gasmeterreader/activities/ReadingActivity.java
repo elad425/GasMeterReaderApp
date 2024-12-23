@@ -124,10 +124,17 @@ public class ReadingActivity extends AppCompatActivity {
 
                 if (currentReads != null && currentSelectedRead != null) {
                     int currentIndex = currentReads.indexOf(currentSelectedRead);
-
-                    if (currentIndex < currentReads.size() - 1) {
-                        Read nextRead = currentReads.get(currentIndex + 1);
-                        viewModel.setSelectedRead(nextRead);
+                    if (!viewModel.getBuilding().isComplete()) {
+                        for (int i = 0 ; i < currentReads.size() ; i++){
+                            currentIndex += 1;
+                            if (currentIndex >= currentReads.size()){
+                                currentIndex = 0;
+                            }
+                            if (currentReads.get(currentIndex).getCurrent_read() == 0 ){
+                                break;
+                            }
+                        }
+                        viewModel.setSelectedRead(currentReads.get(currentIndex));
                     } else {
                         Toast.makeText(this, "סיום קריאה", Toast.LENGTH_SHORT).show();
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

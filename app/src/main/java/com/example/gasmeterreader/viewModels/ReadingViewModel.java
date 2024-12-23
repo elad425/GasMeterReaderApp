@@ -81,6 +81,28 @@ public class ReadingViewModel extends AndroidViewModel {
         }
     }
 
+    public void resetRead(Read read){
+        if(read != null) {
+            read.setCurrent_read(0);
+            read.unRead();
+            updateRead(read);
+        }
+    }
+
+    private void updateRead(Read read){
+        if(read != null && reads.getValue() != null) {
+            List<Read> currentReads = reads.getValue();
+            int index = currentReads.indexOf(read);
+            if (index != -1) {
+                currentReads.set(index, read);
+                reads.setValue(currentReads);
+                building.setReadList(reads.getValue());
+                building.checkCompleted();
+                buildingRepository.updateBuilding(building);
+            }
+        }
+    }
+
     public void updateCurrentReadInput(String input) {
         currentReadInput.setValue(input);
         Read read = selectedRead.getValue();
@@ -89,19 +111,8 @@ public class ReadingViewModel extends AndroidViewModel {
                 double value = input.isEmpty() ? 0 : Double.parseDouble(input.trim());
                 if (value >= 0 && value <= 99999) {
                     read.setCurrent_read(value);
-
-                    List<Read> currentReads = reads.getValue();
-                    if (currentReads != null) {
-                        int index = currentReads.indexOf(read);
-                        if (index != -1) {
-                            read.wasRead();
-                            currentReads.set(index, read);
-                            reads.setValue(currentReads);
-                            building.setReadList(reads.getValue());
-                            building.checkCompleted();
-                            buildingRepository.updateBuilding(building);
-                        }
-                    }
+                    read.wasRead();
+                    updateRead(read);
                 } else {
                     Toast.makeText(getApplication(), "Invalid meter reading", Toast.LENGTH_SHORT).show();
                 }
