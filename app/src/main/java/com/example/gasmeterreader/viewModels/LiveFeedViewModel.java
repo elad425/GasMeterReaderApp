@@ -151,23 +151,19 @@ public class LiveFeedViewModel extends AndroidViewModel {
             Toast.makeText(getApplication(), "לא נמצאה קריאה", Toast.LENGTH_SHORT).show();
             return;
         }
-
         if(listPlace.getValue() != null) {
             List<Read> temp = reads.getValue();
             assert temp != null;
-            if(temp.get(listPlace.getValue()).getCurrent_read() == 0) {
-                temp.get(listPlace.getValue()).setCurrent_read(Double.parseDouble(
-                        Objects.requireNonNull(dataResultText.getValue())));
-                temp.get(listPlace.getValue()).wasRead();
-                reads.setValue(temp);
-                building.setReadList(temp);
-                building.checkCompleted();
-                buildingRepository.updateBuilding(building);
-                nextRead();
-                resetError();
-            } else{
-                incrementListPlace();
-            }
+            temp.get(listPlace.getValue()).setCurrent_read(Double.parseDouble(
+                    Objects.requireNonNull(dataResultText.getValue())));
+            temp.get(listPlace.getValue()).wasRead();
+            reads.setValue(temp);
+            building.setReadList(temp);
+            building.checkCompleted();
+            buildingRepository.updateBuilding(building);
+            nextRead();
+            resetError();
+            incrementListPlace();
         }
     }
 

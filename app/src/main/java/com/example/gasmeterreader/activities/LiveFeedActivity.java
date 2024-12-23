@@ -74,8 +74,17 @@ public class LiveFeedActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initialWindow();
+        initializeViewModel();
+        initializeViews();
+        setupObservers();
+        initializeCameraExecutor();
+        startCamera();
+    }
+
+    private void initialWindow(){
         setContentView(R.layout.activity_live_feed);
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.transparent));
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -84,12 +93,6 @@ public class LiveFeedActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
-
-        initializeViewModel();
-        initializeViews();
-        setupObservers();
-        initializeCameraExecutor();
-        startCamera();
     }
 
     private void initializeViewModel() {
