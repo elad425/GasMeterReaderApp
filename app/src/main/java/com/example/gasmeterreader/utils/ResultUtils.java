@@ -5,14 +5,11 @@ import java.util.Map;
 
 public class ResultUtils {
     public static void addString(String input, HashMap<String, Integer> dic) {
-        if(input.length() > 3) {
-            if (dic.containsKey(input)) {
-                dic.put(input, dic.get(input) + 1);
-            } else {
-                dic.put(input, 1);
-            }
+        if (input.length() > 3) {
+            dic.merge(input, 1, Integer::sum);
         }
     }
+
 
     public static int getMaxCount(HashMap<String, Integer> dic) {
         int maxCount = 0;

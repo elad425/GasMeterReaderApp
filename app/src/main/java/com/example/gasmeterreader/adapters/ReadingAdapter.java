@@ -1,5 +1,6 @@
 package com.example.gasmeterreader.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,9 @@ import com.example.gasmeterreader.viewModels.ReadingViewModel;
 import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+@SuppressLint("NotifyDataSetChanged")
 public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.ReadViewHolder> {
     private List<Read> readList;
     private List<Read> filteredList;
@@ -46,9 +49,9 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.ReadView
     }
 
     private void bindReadData(ReadViewHolder holder, Read read) {
-        holder.serial.setText(String.format("סיריאלי: %d", read.getMeter_id()));
-        holder.apartment.setText(String.format("דירה %d", read.getApartment()));
-        holder.last_read.setText(String.format("קודם: %.2f", read.getLast_read()));
+        holder.serial.setText(String.format(Locale.ENGLISH,"סיריאלי: %d", read.getMeter_id()));
+        holder.apartment.setText(String.format(Locale.ENGLISH,"דירה %d", read.getApartment()));
+        holder.last_read.setText(String.format(Locale.ENGLISH,"קודם: %.2f", read.getLast_read()));
     }
 
     private void updateCardAppearance(ReadViewHolder holder, Read read, Read selectedRead) {
@@ -67,14 +70,14 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.ReadView
         holder.card.setCardBackgroundColor(ContextCompat.getColor(context,
                 isSelected ? R.color.readNotValidSelected : R.color.readNotValid));
         holder.current_read.setText(isSelected ?
-                String.format("נוכחי: %.2f", read.getCurrent_read()) :
+                String.format(Locale.ENGLISH,"נוכחי: %.2f", read.getCurrent_read()) :
                 read.getUser_status());
     }
 
     private void handleCompletedRead(ReadViewHolder holder, Read read, boolean isSelected) {
         holder.card.setCardBackgroundColor(ContextCompat.getColor(context,
                 isSelected ? R.color.readDoneSelected : R.color.readDone));
-        holder.current_read.setText(String.format("נוכחי: %.2f", read.getCurrent_read()));
+        holder.current_read.setText(String.format(Locale.ENGLISH,"נוכחי: %.2f", read.getCurrent_read()));
     }
 
     private void handlePendingRead(ReadViewHolder holder, boolean isSelected) {
@@ -106,6 +109,7 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.ReadView
         return filteredList != null ? filteredList.size() : 0;
     }
 
+
     public void updateReadings(List<Read> newReads) {
         this.readList = newReads != null ? newReads : new ArrayList<>();
         this.filteredList = new ArrayList<>(this.readList);
@@ -134,7 +138,7 @@ public class ReadingAdapter extends RecyclerView.Adapter<ReadingAdapter.ReadView
                 String.valueOf(read.getMeter_id()).contains(query);
     }
 
-    static class ReadViewHolder extends RecyclerView.ViewHolder {
+    public static class ReadViewHolder extends RecyclerView.ViewHolder {
         final TextView serial;
         final TextView apartment;
         final TextView last_read;

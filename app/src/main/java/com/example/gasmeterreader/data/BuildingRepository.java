@@ -35,10 +35,6 @@ public class BuildingRepository {
         return db.buildingDao().getBuildingByCenter(center);
     }
 
-    public void updateRead(Read read){
-        api.updateRead(read.getUser_id(),read);
-    }
-
     public void updateAllReadings(){
         for (Building building : db.buildingDao().getAllBuildings()) {
             for (Read read : building.getReadList()) {

@@ -43,6 +43,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -200,7 +201,8 @@ public class LiveFeedActivity extends AppCompatActivity {
 
     private void initializeBottomSheetDialog() {
         bottomSheetDialog = new BottomSheetDialog(this);
-        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_read_selector, null);
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_read_selector,
+                findViewById(android.R.id.content), false);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.setOnDismissListener(dialog -> viewModel.setPaused(false));
 
@@ -277,7 +279,7 @@ public class LiveFeedActivity extends AppCompatActivity {
         Read currentRead = readList.get(place);
 
         serialText.setText(String.valueOf(currentRead.getMeter_id()));
-        apartmentText.setText("דירה " + currentRead.getApartment());
+        apartmentText.setText(String.format(Locale.ENGLISH,"דירה %d", currentRead.getApartment()));
         lastReadText.setText(String.valueOf(currentRead.getLast_read()));
 
         animateText(serialText);

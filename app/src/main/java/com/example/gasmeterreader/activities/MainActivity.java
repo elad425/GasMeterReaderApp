@@ -21,6 +21,7 @@ import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             total += building.getReadList().size();
         }
 
-        itemCounter.setText(displayList.size() + " מרכזיות");
+        itemCounter.setText(String.format(Locale.ENGLISH,"%d מרכזיות", displayList.size()));
         buildingListAdapter.updateBuildings(displayList);
         swipeRefreshLayout.setRefreshing(false);
         totalRemaining.setText(String.valueOf(total));

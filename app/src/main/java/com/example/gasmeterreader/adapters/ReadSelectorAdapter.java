@@ -1,5 +1,6 @@
 package com.example.gasmeterreader.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,10 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
+@SuppressLint("NotifyDataSetChanged")
 public class ReadSelectorAdapter extends RecyclerView.Adapter<ReadSelectorAdapter.ReadViewHolder> {
     private List<Read> reads = new ArrayList<>();
     private List<Read> filteredReads = new ArrayList<>();
@@ -42,9 +45,9 @@ public class ReadSelectorAdapter extends RecyclerView.Adapter<ReadSelectorAdapte
     @Override
     public void onBindViewHolder(@NonNull ReadViewHolder holder, int position) {
         Read read = filteredReads.get(position);
-        holder.apartmentText.setText("דירה " + read.getApartment());
-        holder.meterIdText.setText("מונה " + read.getMeter_id());
-        holder.lastRead.setText(String.format("קודם: %.2f", read.getLast_read()));
+        holder.apartmentText.setText(String.format(Locale.ENGLISH,"דירה %d", read.getApartment()));
+        holder.meterIdText.setText(String.format(Locale.ENGLISH,"מונה %d", read.getMeter_id()));
+        holder.lastRead.setText(String.format(Locale.ENGLISH,"קודם: %.2f", read.getLast_read()));
 
         if (read.isRead() && read.getCurrent_read() != 0) {
             holder.card.setCardBackgroundColor(ContextCompat.getColor(context, R.color.readDone));
@@ -65,6 +68,7 @@ public class ReadSelectorAdapter extends RecyclerView.Adapter<ReadSelectorAdapte
         return filteredReads.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setReads(List<Read> reads) {
         this.reads = reads;
         this.filteredReads = new ArrayList<>(reads);
@@ -90,7 +94,7 @@ public class ReadSelectorAdapter extends RecyclerView.Adapter<ReadSelectorAdapte
         notifyDataSetChanged();
     }
 
-    static class ReadViewHolder extends RecyclerView.ViewHolder {
+    public static class ReadViewHolder extends RecyclerView.ViewHolder {
         TextView apartmentText;
         TextView meterIdText;
         TextView lastRead;

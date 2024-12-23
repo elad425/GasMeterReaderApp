@@ -72,10 +72,6 @@ class Detector(
         labels = inputList.toMutableList()
     }
 
-    fun close() {
-        interpreter.close()
-    }
-
     fun detect(frame: Bitmap) {
         if (tensorWidth == 0) return
         if (tensorHeight == 0) return

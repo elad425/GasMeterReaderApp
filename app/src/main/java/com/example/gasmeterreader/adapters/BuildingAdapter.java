@@ -60,6 +60,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
         });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateBuildings(List<Building> newBuildings) {
         buildingsList = newBuildings;
         notifyDataSetChanged();
@@ -72,7 +73,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
         } else return 0;
     }
 
-    static class VideoViewHolder extends RecyclerView.ViewHolder {
+    public static class VideoViewHolder extends RecyclerView.ViewHolder {
         TextView street;
         TextView center;
         TextView leftTodo;

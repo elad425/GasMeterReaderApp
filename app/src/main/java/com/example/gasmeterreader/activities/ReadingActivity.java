@@ -1,6 +1,7 @@
 package com.example.gasmeterreader.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,6 +36,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ReadingActivity extends AppCompatActivity {
@@ -184,7 +186,7 @@ public class ReadingActivity extends AppCompatActivity {
                 statusText.setText(read.getUser_status());
                 serialText.setText(String.valueOf(read.getMeter_id()));
                 lastReadText.setText(String.valueOf(read.getLast_read()));
-                addressText.setText(String.format("%s %d", viewModel.getBuilding().getAddress(),
+                addressText.setText(String.format(Locale.ENGLISH,"%s %d", viewModel.getBuilding().getAddress(),
                         viewModel.getBuilding().getBuildingNumber()));
             }
         });
@@ -230,25 +232,12 @@ public class ReadingActivity extends AppCompatActivity {
     private void toggleSearchIcon() {
         float startDegrees = isSearchIconClose ? 180f : 0f;
         float endDegrees = isSearchIconClose ? 360f : 180f;
-
         RotateAnimation rotateAnimation = new RotateAnimation(
                 startDegrees, endDegrees,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f
         );
         rotateAnimation.setDuration(200);
-        rotateAnimation.setFillAfter(true);
-        rotateAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {}
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        });
-
         searchButton.startAnimation(rotateAnimation);
         searchButton.setImageResource(isSearchIconClose ?
                 R.drawable.ic_search : R.drawable.ic_close);
@@ -290,6 +279,7 @@ public class ReadingActivity extends AppCompatActivity {
         isSearchVisible = !isSearchVisible;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void setupRecyclerView() {
         RecyclerView lstReadings = findViewById(R.id.read_lst);
         readingAdapter = new ReadingAdapter(null, viewModel, this);
@@ -319,7 +309,7 @@ public class ReadingActivity extends AppCompatActivity {
 
                 if (currentReads != null) {
                     int position = currentReads.indexOf(selectedRead);
-                    readCounterText.setText(String.format("(%d/%d)", position + 1, currentReads.size()));
+                    readCounterText.setText(String.format(Locale.ENGLISH,"(%d/%d)", position + 1, currentReads.size()));
                     int lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition();
                     int totalItemCount = layoutManager.getItemCount();
                     if (position < lastVisibleItemPosition - 1 || position > lastVisibleItemPosition) {
