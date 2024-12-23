@@ -125,9 +125,10 @@ public class ReadingActivity extends AppCompatActivity {
                 if (currentReads != null && currentSelectedRead != null) {
                     int currentIndex = currentReads.indexOf(currentSelectedRead);
                     if (!viewModel.getBuilding().isComplete()) {
-                        for (int i = 0 ; i < currentReads.size() ; i++){
+                        int size = currentReads.size();
+                        for (int i = 0 ; i < size ; i++){
                             currentIndex += 1;
-                            if (currentIndex >= currentReads.size()){
+                            if (currentIndex >= size){
                                 currentIndex = 0;
                             }
                             if (currentReads.get(currentIndex).getCurrent_read() == 0 ){
@@ -361,6 +362,7 @@ public class ReadingActivity extends AppCompatActivity {
     private void startLiveFeedActivity() {
         Intent intent = new Intent(this, LiveFeedActivity.class);
         intent.putExtra("building_center", viewModel.getBuilding().getCenter());
+        intent.putExtra("selectPlace", viewModel.getSelectPlace());
         startActivity(intent);
     }
 

@@ -68,7 +68,7 @@ public class ResultUtils {
                     String modifiedInput = insertDot(input, i);
                     try {
                         double inputValue = Double.parseDouble(modifiedInput);
-                        if (checkInRange(inputValue, checkValue)) {
+                        if (inputValue >= checkValue && inputValue - checkValue <= 30) {
                             if (i == 3) {
                                 return modifiedInput.substring(0, modifiedInput.length() - 1);
                             } else return modifiedInput;
@@ -83,7 +83,7 @@ public class ResultUtils {
             try {
                 double inputDouble = Double.parseDouble(input);
                 double checkDouble = Double.parseDouble(check);
-                if (checkInRange(inputDouble, checkDouble)) {
+                if (inputDouble >= checkDouble && inputDouble - checkDouble <= 30) {
                     if (input.indexOf('.') == input.length() - 4){
                         return input.substring(0, input.length() - 1);
                     } else return input;
@@ -94,9 +94,4 @@ public class ResultUtils {
         }
         return "None";
     }
-
-    public static boolean checkInRange(double inputDouble, double checkDouble){
-        return inputDouble >= checkDouble && inputDouble - checkDouble <= 30;
-    }
-
 }

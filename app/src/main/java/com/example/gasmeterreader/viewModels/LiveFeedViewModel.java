@@ -12,7 +12,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.gasmeterreader.R;
-import com.example.gasmeterreader.room.BuildingRepository;
+import com.example.gasmeterreader.data.BuildingRepository;
 import com.example.gasmeterreader.entities.Building;
 import com.example.gasmeterreader.entities.Read;
 import com.example.gasmeterreader.ml.ImageAnalyzer;
@@ -104,8 +104,6 @@ public class LiveFeedViewModel extends AndroidViewModel {
             building.checkCompleted();
             buildingRepository.updateBuilding(building);
             nextRead();
-            resetError();
-            incrementListPlace();
         }
     }
 
@@ -113,6 +111,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
         detectionCounterData.clear();
         isDetected.setValue(false);
         imageAnalyzer.deleteDataDetect();
+        resetError();
         incrementListPlace();
         if(getListPlace().getValue() != null) {
             imageAnalyzer.setRead(Objects.requireNonNull(reads.getValue()).get(getListPlace().getValue()));
@@ -140,19 +139,30 @@ public class LiveFeedViewModel extends AndroidViewModel {
         isPaused.setValue(paused);
     }
 
-    public void setBuilding(int center){
+    public void setData(int center, int place){
         building = buildingRepository.getBuildingByCenter(center);
         reads.setValue(building.getReadList());
-        if(listPlace.getValue() != null) {
-            while (Objects.requireNonNull(reads.getValue()).get(listPlace.getValue()).getCurrent_read() != 0) {
-                incrementListPlace();
-            }
+        if (place == -1){
+            place = 0;
         }
+        listPlace.setValue(place);
     }
 
-    public void incrementListPlace(){
-        if (listPlace.getValue() != null && listPlace.getValue() < Objects.requireNonNull(reads.getValue()).size() - 1) {
-            listPlace.setValue(listPlace.getValue() + 1);
+    public void incrementListPlace() {
+        if (!building.isComplete() && listPlace.getValue() != null) {
+            int size = Objects.requireNonNull(reads.getValue()).size();
+            int currentIndex = listPlace.getValue();
+            for (int i = 0; i < size; i++) {
+                currentIndex += 1;
+                if (currentIndex >= size) {
+                    currentIndex = 0;
+                }
+                if (Objects.requireNonNull(reads.getValue()).
+                        get(currentIndex).getCurrent_read() == 0) {
+                    break;
+                }
+            }
+            listPlace.setValue(currentIndex);
         }
     }
 
@@ -172,8 +182,6 @@ public class LiveFeedViewModel extends AndroidViewModel {
             building.checkCompleted();
             buildingRepository.updateBuilding(building);
             nextRead();
-            resetError();
-            incrementListPlace();
         }
     }
 

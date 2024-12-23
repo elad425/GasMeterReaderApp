@@ -1,4 +1,4 @@
-package com.example.gasmeterreader.room;
+package com.example.gasmeterreader.data;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

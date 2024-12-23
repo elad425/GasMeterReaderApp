@@ -1,4 +1,4 @@
-package com.example.gasmeterreader.room;
+package com.example.gasmeterreader.data;
 
 import android.content.Context;
 

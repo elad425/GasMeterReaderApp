@@ -6,7 +6,7 @@ import android.widget.Toast;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.gasmeterreader.room.BuildingRepository;
+import com.example.gasmeterreader.data.BuildingRepository;
 import com.example.gasmeterreader.entities.Building;
 import com.example.gasmeterreader.entities.Read;
 import static com.example.gasmeterreader.utils.EntityUtils.sortReadsByOrder;
@@ -119,6 +119,13 @@ public class ReadingViewModel extends AndroidViewModel {
             } catch (NumberFormatException ignored) {
             }
         }
+    }
+
+    public int getSelectPlace(){
+        if (selectedRead != null && reads.getValue() != null) {
+            return reads.getValue().indexOf(selectedRead.getValue());
+        }
+        return -1;
     }
 
     public void setCameraPermissionGranted(boolean granted) {

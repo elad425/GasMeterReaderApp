@@ -50,6 +50,7 @@ import java.util.concurrent.Executors;
 public class LiveFeedActivity extends AppCompatActivity {
     private static final long ANIMATION_DURATION = 300;
     private static final float SCALE_FACTOR = 1.2f;
+    private static final float SWIPE_THRESHOLD = 100f;
 
     private PreviewView previewView;
     private MaterialButton flashButton;
@@ -66,10 +67,8 @@ public class LiveFeedActivity extends AppCompatActivity {
     private ReadSelectorAdapter readSelectorAdapter;
     private BottomSheetDialog bottomSheetDialog;
     private ExecutorService cameraExecutor;
-
-    private static final float SWIPE_THRESHOLD = 100f;
-    private float touchStartY;
     private View swipeIndicator;
+    private float touchStartY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +77,8 @@ public class LiveFeedActivity extends AppCompatActivity {
         initialWindow();
         initializeViewModel();
         initializeViews();
+        setupButtonListeners();
         setupObservers();
-        initializeCameraExecutor();
         startCamera();
     }
 
@@ -97,7 +96,8 @@ public class LiveFeedActivity extends AppCompatActivity {
 
     private void initializeViewModel() {
         viewModel = new ViewModelProvider(this).get(LiveFeedViewModel.class);
-        viewModel.setBuilding(getIntent().getIntExtra("building_center", -1));
+        viewModel.setData(getIntent().getIntExtra("building_center", -1),
+                getIntent().getIntExtra("selectPlace", -1));
     }
 
     private void initializeViews() {
@@ -111,8 +111,6 @@ public class LiveFeedActivity extends AppCompatActivity {
         lastReadText = findViewById(R.id.lastRead);
         resetReadButton = findViewById(R.id.resetReadButton);
         swipeIndicator = findViewById(R.id.swipeIndicator);
-
-        setupButtonListeners();
     }
 
     private void setupButtonListeners() {
@@ -140,28 +138,16 @@ public class LiveFeedActivity extends AppCompatActivity {
 
     private void setupObservers() {
         viewModel.getDetectionStatusIcon().observe(this, detectionStatusIcon::setImageResource);
-
-        viewModel.getListPlace().observe(this, place -> {
-            updateReadDisplay(place);
-            viewModel.resetError();
-        });
-
+        viewModel.getListPlace().observe(this, this::updateReadDisplay);
+        viewModel.getIsDetected().observe(this, this::setDetection);
+        viewModel.getIsFlashOn().observe(this, this::updateFlashState);
+        viewModel.getErrorCount().observe(this, this::handleErrorCount);
         viewModel.getDataResultText().observe(this, text -> {
             if (!text.contentEquals(dataResultText.getText())) {
                 dataResultText.setText(text);
                 animateText(dataResultText);
             }
         });
-
-        viewModel.getIsDetected().observe(this, isDetected -> {
-            if (Boolean.TRUE.equals(isDetected)) {
-                animateDetection();
-                triggerVibration();
-            }
-        });
-
-        viewModel.getIsFlashOn().observe(this, this::updateFlashState);
-        viewModel.getErrorCount().observe(this, this::handleErrorCount);
     }
 
     private void updateFlashState(Boolean isFlashOn) {
@@ -172,7 +158,7 @@ public class LiveFeedActivity extends AppCompatActivity {
     }
 
     private void handleErrorCount(Integer errorCount) {
-        if (errorCount > 150) {
+        if (errorCount > 120) {
             Toast.makeText(this, "קריאה מחוץ לטווח", Toast.LENGTH_SHORT).show();
             viewModel.setPaused(true);
             showNumberInputDialog();
@@ -183,7 +169,6 @@ public class LiveFeedActivity extends AppCompatActivity {
     private void showNumberInputDialog() {
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_number_input, null);
         EditText input = viewInflated.findViewById(R.id.input);
-
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("קריאה לא בטווח")
                 .setView(viewInflated)
@@ -208,7 +193,6 @@ public class LiveFeedActivity extends AppCompatActivity {
         } else {
             resetBottomSheetSearch();
         }
-
         viewModel.setPaused(true);
         readSelectorAdapter.setReads(Objects.requireNonNull(viewModel.getReadList().getValue()));
         bottomSheetDialog.show();
@@ -231,7 +215,6 @@ public class LiveFeedActivity extends AppCompatActivity {
                         viewModel.setPaused(false);
                     }
                 }
-
                 @Override
                 public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                     swipeIndicator.setAlpha(1 - slideOffset);
@@ -239,7 +222,6 @@ public class LiveFeedActivity extends AppCompatActivity {
             });
             behavior.setHideable(true);
         }
-
         setupRecyclerView(bottomSheetView);
         setupSearchField(bottomSheetView);
     }
@@ -277,7 +259,6 @@ public class LiveFeedActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 readSelectorAdapter.filter(s.toString());
             }
-
             @Override
             public void afterTextChanged(android.text.Editable s) {}
         };
@@ -302,6 +283,8 @@ public class LiveFeedActivity extends AppCompatActivity {
         animateText(serialText);
         animateText(apartmentText);
         animateText(lastReadText);
+
+        viewModel.resetError();
     }
 
     private void animateButton(MaterialButton button) {
@@ -313,13 +296,16 @@ public class LiveFeedActivity extends AppCompatActivity {
                 .start();
     }
 
-    private void animateDetection() {
-        ObjectAnimator.ofFloat(detectionStatusIcon, "scaleX", 1f, SCALE_FACTOR, 1f)
-                .setDuration(ANIMATION_DURATION)
-                .start();
-        ObjectAnimator.ofFloat(detectionStatusIcon, "scaleY", 1f, SCALE_FACTOR, 1f)
-                .setDuration(ANIMATION_DURATION)
-                .start();
+    private void setDetection(boolean isDetected) {
+        if (Boolean.TRUE.equals(isDetected)) {
+            triggerVibration();
+            ObjectAnimator.ofFloat(detectionStatusIcon, "scaleX", 1f, SCALE_FACTOR, 1f)
+                    .setDuration(ANIMATION_DURATION)
+                    .start();
+            ObjectAnimator.ofFloat(detectionStatusIcon, "scaleY", 1f, SCALE_FACTOR, 1f)
+                    .setDuration(ANIMATION_DURATION)
+                    .start();
+        }
     }
 
     private void animateText(TextView textView) {
@@ -358,11 +344,8 @@ public class LiveFeedActivity extends AppCompatActivity {
         }
     }
 
-    private void initializeCameraExecutor() {
-        cameraExecutor = Executors.newSingleThreadExecutor();
-    }
-
     private void startCamera() {
+        cameraExecutor = Executors.newSingleThreadExecutor();
         ProcessCameraProvider.getInstance(this).addListener(() -> {
             try {
                 bindPreview(ProcessCameraProvider.getInstance(this).get());
@@ -410,7 +393,6 @@ public class LiveFeedActivity extends AppCompatActivity {
 
         Matrix matrix = new Matrix();
         matrix.postRotate(imageProxy.getImageInfo().getRotationDegrees());
-
         Bitmap rotatedBitmap = Bitmap.createBitmap(
                 bitmapBuffer, 0, 0,
                 bitmapBuffer.getWidth(),
