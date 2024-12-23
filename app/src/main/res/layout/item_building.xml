@@ -7,8 +7,8 @@
 
     <View
         android:id="@+id/statusIndicator"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="14dp"
         android:layout_marginEnd="5dp"

@@ -42,7 +42,7 @@ import java.util.Objects;
 public class ReadingActivity extends AppCompatActivity {
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ReadingViewModel viewModel;
-    private TextView ownerText, apartmentText, statusText, serialText, lastReadText, readCounterText;
+    private TextView ownerText, apartmentText, statusText, serialText, lastReadText, readCounterText, addressText;
     private TextInputEditText currentReadInput;
     private boolean isUpdatingInput = false;
     private int buildingNumber;
@@ -106,6 +106,7 @@ public class ReadingActivity extends AppCompatActivity {
         searchButton = findViewById(R.id.search_button);
         searchCard = findViewById(R.id.search_input_layout);
         searchInput = findViewById(R.id.search_input);
+        addressText = findViewById(R.id.address_text);
     }
 
     private void setupNavigationButtons() {
@@ -189,6 +190,8 @@ public class ReadingActivity extends AppCompatActivity {
                 statusText.setText(read.getUser_status());
                 serialText.setText(String.valueOf(read.getMeter_id()));
                 lastReadText.setText(String.valueOf(read.getLast_read()));
+                addressText.setText(String.format("%s %d", viewModel.getBuilding().getAddress(),
+                        viewModel.getBuilding().getBuildingNumber()));
             }
         });
 
