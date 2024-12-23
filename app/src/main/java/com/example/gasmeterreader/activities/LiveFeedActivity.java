@@ -328,6 +328,25 @@ public class LiveFeedActivity extends AppCompatActivity {
                 .start();
     }
 
+    private boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                touchStartY = event.getY();
+                return true;
+            case MotionEvent.ACTION_UP:
+                float deltaY = touchStartY - event.getY();
+                if (Math.abs(deltaY) > SWIPE_THRESHOLD) {
+                    if (deltaY > 0) {
+                        showReadSelector();
+                    } else if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
+                        bottomSheetDialog.dismiss();
+                    }
+                }
+                return true;
+        }
+        return false;
+    }
+
     private void triggerVibration() {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null && vibrator.hasVibrator()) {
@@ -406,24 +425,5 @@ public class LiveFeedActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         cameraExecutor.shutdown();
-    }
-
-    private boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                touchStartY = event.getY();
-                return true;
-            case MotionEvent.ACTION_UP:
-                float deltaY = touchStartY - event.getY();
-                if (Math.abs(deltaY) > SWIPE_THRESHOLD) {
-                    if (deltaY > 0) {
-                        showReadSelector();
-                    } else if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
-                        bottomSheetDialog.dismiss();
-                    }
-                }
-                return true;
-        }
-        return false;
     }
 }

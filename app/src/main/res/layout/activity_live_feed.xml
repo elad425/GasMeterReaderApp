@@ -131,7 +131,7 @@
         android:textColor="@android:color/white"
         android:textSize="32sp"
         android:padding="16dp"
-        android:background="#80000000"/>
+        android:background="@drawable/rounded_background"/>
 
     <!-- Bottom Controls -->
     <com.google.android.material.card.MaterialCardView
