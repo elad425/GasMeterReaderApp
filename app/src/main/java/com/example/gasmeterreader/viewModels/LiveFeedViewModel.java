@@ -21,6 +21,8 @@ import com.example.gasmeterreader.utils.ResultUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LiveFeedViewModel extends AndroidViewModel {
 
@@ -32,6 +34,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> listPlace = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> errorCount = new MutableLiveData<>(0);
     private final MutableLiveData<Boolean> isPaused = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(true);
 
     private final HashMap<String, Integer> detectionCounterData = new HashMap<>();
     private final int detectionThreshold = 3;
@@ -54,7 +57,27 @@ public class LiveFeedViewModel extends AndroidViewModel {
     public LiveData<Integer> getErrorCount() { return errorCount; }
     public LiveData<List<Read>> getReadList() { return reads; }
     public LiveData<Boolean> getIsPaused() { return isPaused;}
+    public LiveData<Boolean> getIsLoading() { return isLoading;}
     public Building getBuilding() { return building; }
+
+    public void setData(int center, int place){
+        building = buildingRepository.getBuildingByCenter(center);
+        reads.postValue(building.getReadList());
+        if (place == -1){
+            place = 0;
+        }
+        listPlace.postValue(place);
+        initializeAnalyzer();
+    }
+
+    public void initializeAnalyzer() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            imageAnalyzer.initializeDetectors();
+            isPaused.postValue(false);
+            isLoading.postValue(false);
+        });
+    }
 
     public void processImage(Bitmap rotatedBitmap) {
         if (Boolean.FALSE.equals(isDetected.getValue()) && getListPlace().getValue() != null) {
@@ -137,15 +160,6 @@ public class LiveFeedViewModel extends AndroidViewModel {
 
     public void setPaused(boolean paused) {
         isPaused.setValue(paused);
-    }
-
-    public void setData(int center, int place){
-        building = buildingRepository.getBuildingByCenter(center);
-        reads.setValue(building.getReadList());
-        if (place == -1){
-            place = 0;
-        }
-        listPlace.setValue(place);
     }
 
     public void incrementListPlace() {

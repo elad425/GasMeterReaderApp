@@ -76,11 +76,24 @@ public class LiveFeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         initialWindow();
-        initializeViewModel();
         initializeViews();
-        setupButtonListeners();
-        setupObservers();
         startCamera();
+        initializeMLComponents();
+    }
+
+    private void initializeMLComponents() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            viewModel = new ViewModelProvider(this).get(LiveFeedViewModel.class);
+            viewModel.setData(getIntent().getIntExtra("building_center", -1),
+                    getIntent().getIntExtra("selectPlace", -1));
+
+            runOnUiThread(() -> {
+                initializeViewModel();
+                setupButtonListeners();
+                setupObservers();
+            });
+        });
     }
 
     private void initialWindow(){
@@ -143,6 +156,9 @@ public class LiveFeedActivity extends AppCompatActivity {
         viewModel.getIsDetected().observe(this, this::setDetection);
         viewModel.getIsFlashOn().observe(this, this::updateFlashState);
         viewModel.getErrorCount().observe(this, this::handleErrorCount);
+        viewModel.getIsLoading().observe(this, isLoading ->{
+            // maybe implement
+        });
         viewModel.getDataResultText().observe(this, text -> {
             if (!text.contentEquals(dataResultText.getText())) {
                 dataResultText.setText(text);

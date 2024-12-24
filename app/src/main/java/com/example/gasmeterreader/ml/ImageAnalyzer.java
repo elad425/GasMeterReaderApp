@@ -20,14 +20,19 @@ import java.util.Objects;
 
 public class ImageAnalyzer {
     private String data = "";
-    private final Detector boxDetector;
-    private final Detector digitsDetectorData;
+    private Detector boxDetector;
+    private Detector digitsDetectorData;
     private Bitmap originalBitmap;
     private Bitmap greyBackImage;
     private Read read;
     private int errorCount = 0;
+    private final Context context;
 
     public ImageAnalyzer(Context context){
+        this.context = context;
+    }
+
+    public void initializeDetectors() {
         Detector.DetectorListener boxListener = new Detector.DetectorListener() {
             @Override
             public void onEmptyDetect() {
@@ -56,14 +61,14 @@ public class ImageAnalyzer {
                 Arrays.asList("data", "id"), boxListener);
         digitsDetectorData = new Detector(context, "digitsDetectionData.tflite",
                 Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "dot"), dataDigitsListener);
-
     }
 
     public void deleteDataDetect(){
         data = "";
     }
 
-    public void detect(Bitmap bitmap){
+    public void detect(Bitmap bitmap) {
+        if (boxDetector == null || digitsDetectorData == null) return;
         originalBitmap = convertToGrayscale(bitmap);
         greyBackImage = placeOnGrayCanvas(originalBitmap);
         boxDetector.detect(greyBackImage);
