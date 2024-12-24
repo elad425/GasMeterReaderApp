@@ -180,7 +180,6 @@ public class LiveFeedActivity extends AppCompatActivity {
 
     private void handleErrorCount(Integer errorCount) {
         if (errorCount > 120) {
-            Toast.makeText(this, "קריאה מחוץ לטווח", Toast.LENGTH_SHORT).show();
             viewModel.setPaused(true);
             showNumberInputDialog();
             viewModel.resetError();
@@ -199,14 +198,22 @@ public class LiveFeedActivity extends AppCompatActivity {
                     String enteredNumber = input.getText().toString();
                     if (!enteredNumber.isEmpty()) {
                         viewModel.setReadManual(enteredNumber);
+                        if (viewModel.getBuilding().isComplete()){
+                            Toast.makeText(this, "כל הקריאות הושלמו", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
                     }
                     viewModel.setPaused(false);
                 })
                 .setNegativeButton("ביטול", (dialogInterface, which) -> viewModel.setPaused(false))
-                .setNeutralButton("שמור קריאה קודמת", (dialogInterface, which) -> {
+                .setNeutralButton("הכנס קריאה קודמת", (dialogInterface, which) -> {
                     viewModel.setReadManual(String.valueOf(currentRead.getLast_read()));
                     viewModel.setPaused(false);
                     Toast.makeText(this, "קריאה קודמת נשמרה", Toast.LENGTH_SHORT).show();
+                    if (viewModel.getBuilding().isComplete()){
+                        Toast.makeText(this, "כל הקריאות הושלמו", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 })
                 .setCancelable(false)
                 .create();
