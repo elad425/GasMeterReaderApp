@@ -5,7 +5,7 @@ public class FloatStringProcessor {
     private static final int UPPER_BOUND_NORMAL = 30;
     private static final int LOWER_BOUND_NORMAL = 0;
     private static final int UPPER_BOUND_ERROR = 60;
-    private static final int LOWER_BOUND_ERROR = -10;
+    private static final int LOWER_BOUND_ERROR = -20;
     private static final int MAX_DOT_PLACE = 3;
 
     public static String insertDot(String str, int positionFromRight) {
@@ -34,7 +34,7 @@ public class FloatStringProcessor {
 
     private static String sanitizeInput(String input) {
         input = input.replace("dot", ".");
-        return input.replaceFirst("^0+", "");
+        return input.replaceFirst("^0+", "0");
     }
 
     private static Pair<String, Integer> handleNoDotCase(String input, String check) {
@@ -84,8 +84,17 @@ public class FloatStringProcessor {
 
     private static Pair<String, Integer> adjustResult(String input, int dotPosition, int status) {
         if (dotPosition == MAX_DOT_PLACE) {
-            return new Pair<>(input.substring(0, input.length() - 1), status);
+            return new Pair<>(normalizeDecimal(input.substring(0, input.length() - 1)), status);
         }
-        return new Pair<>(input, status);
+        return new Pair<>(normalizeDecimal(input), status);
+    }
+
+    public static String normalizeDecimal(String input) {
+        if (input.matches("0\\.[0-9]+")) {
+            return input;
+        } else if (input.matches("0+([1-9][0-9]*\\.?[0-9]*|\\.\\d+)")) {
+            return input.replaceFirst("^0+(?=\\d)", "");
+        }
+        return input;
     }
 }
