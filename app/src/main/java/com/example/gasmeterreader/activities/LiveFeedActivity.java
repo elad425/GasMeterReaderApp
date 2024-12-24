@@ -190,8 +190,8 @@ public class LiveFeedActivity extends AppCompatActivity {
     private void showNumberInputDialog() {
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_number_input, null);
         EditText input = viewInflated.findViewById(R.id.input);
-        String errorText = viewModel.getHigherError();
-        input.setText(errorText);
+        input.setText(viewModel.getHigherError());
+
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("אשר קריאה חריגה")
                 .setView(viewInflated)

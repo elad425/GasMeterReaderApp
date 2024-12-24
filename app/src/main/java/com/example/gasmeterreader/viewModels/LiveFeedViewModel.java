@@ -114,7 +114,6 @@ public class LiveFeedViewModel extends AndroidViewModel {
                     Boolean.TRUE.equals(isDetected.getValue()) ?
                             R.drawable.ic_greenv : R.drawable.ic_redx
             );
-
             dataResultText.setValue(String.format("%s",
                     ResultUtils.getMostFrequentString(detectionCounterData)));
 
@@ -218,6 +217,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
             listPlace.setValue(position);
             detectionCounterData.clear();
             errorCounterData.clear();
+            resetError();
             isDetected.setValue(Boolean.FALSE);
             imageAnalyzer.deleteDataDetect();
             imageAnalyzer.setRead(Objects.requireNonNull(reads.getValue()).get(position));
