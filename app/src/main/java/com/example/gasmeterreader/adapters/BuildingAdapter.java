@@ -50,6 +50,8 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
 
         if (building.isComplete()){
             holder.isComplete.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+        } else if (building.getCompleted() > 0){
+            holder.isComplete.setBackgroundTintList(ColorStateList.valueOf(Color.YELLOW));
         }
 
         holder.itemView.setOnClickListener(v -> {

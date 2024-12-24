@@ -20,6 +20,7 @@
         app:elevation="0dp">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/upperCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"

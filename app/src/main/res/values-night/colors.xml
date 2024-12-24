@@ -10,4 +10,6 @@
     <color name="readNotValid">#ef5353</color>
     <color name="readNotValidSelected">#ee7a7a</color>
     <color name="floatingButtonLiveFeed">#FF8800</color>
+    <color name="cameraBackgroundStatus">#7FD71515</color>
+    <color name="cameraBackground">#80000000</color>
 </resources>

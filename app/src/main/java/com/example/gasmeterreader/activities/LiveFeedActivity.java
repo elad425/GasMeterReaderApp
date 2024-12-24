@@ -40,6 +40,7 @@ import com.example.gasmeterreader.viewModels.LiveFeedViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
@@ -62,6 +63,7 @@ public class LiveFeedActivity extends AppCompatActivity {
     private TextView serialText;
     private TextView apartmentText;
     private TextView lastReadText;
+    private MaterialCardView upperCard;
 
     private Camera camera;
     private LiveFeedViewModel viewModel;
@@ -125,6 +127,7 @@ public class LiveFeedActivity extends AppCompatActivity {
         lastReadText = findViewById(R.id.lastRead);
         resetReadButton = findViewById(R.id.resetReadButton);
         swipeIndicator = findViewById(R.id.swipeIndicator);
+        upperCard = findViewById(R.id.upperCard);
     }
 
     private void setupButtonListeners() {
@@ -297,6 +300,12 @@ public class LiveFeedActivity extends AppCompatActivity {
         serialText.setText(String.valueOf(currentRead.getMeter_id()));
         apartmentText.setText(String.format(Locale.ENGLISH,"דירה %d", currentRead.getApartment()));
         lastReadText.setText(String.valueOf(currentRead.getLast_read()));
+
+        if (currentRead.getUser_status() != null){
+            upperCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.cameraBackgroundStatus));
+        } else{
+            upperCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.cameraBackground));
+        }
 
         animateText(serialText);
         animateText(apartmentText);
