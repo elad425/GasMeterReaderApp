@@ -3,13 +3,13 @@
     <color name="black">#FFFFFFFF</color>
     <color name="white">#FF000000</color>
     <color name="transparent">#00FFFFFF</color>
-    <color name="selectedRead">#F4F9FF</color>
+    <color name="selectedRead">#B2DAF1FF</color>
     <color name="readDone">#8DD190</color>
     <color name="readDoneSelected">#BADBBC</color>
-    <color name="readBackground">#B2D7E8FF</color>
+    <color name="readBackground">#B2BDDBFF</color>
     <color name="readNotValid">#FF9A9A</color>
     <color name="readNotValidSelected">#FFC0C0</color>
-    <color name="floatingButtonLiveFeed">#67c5ff</color>
+    <color name="floatingButtonLiveFeed">#50BCFF</color>
     <color name="cameraBackgroundStatus">#7FD71515</color>
     <color name="cameraBackground">#80000000</color>
 </resources>
