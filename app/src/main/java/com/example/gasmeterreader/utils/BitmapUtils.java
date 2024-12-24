@@ -1,5 +1,8 @@
 package com.example.gasmeterreader.utils;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -7,6 +10,15 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class BitmapUtils {
@@ -73,6 +85,28 @@ public class BitmapUtils {
         float y2 = (rectF.bottom - topPadding) / scale;
 
         return new RectF(x1, y1, x2, y2);
+    }
+
+    public static void saveBitmapToGallery(Bitmap bitmap, Context context) {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String fileName = "check" + "_" + timeStamp + "_" + ".jpg";
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
+        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/GasMeterDebug");
+
+        try {
+            ContentResolver resolver = context.getContentResolver();
+            Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+            if (uri != null) {
+                try (OutputStream outputStream = resolver.openOutputStream(uri)) {
+                    assert outputStream != null;
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                }
+            }
+        } catch (IOException ignored) {
+        }
     }
 
 }

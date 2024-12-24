@@ -187,25 +187,6 @@
                     android:gravity="center_vertical"
                     app:layout_constraintBottom_toBottomOf="parent">
 
-                    <!-- Reset Read Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/resetReadButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="אפס קריאה"
-                        android:textColor="@android:color/white"
-                        app:cornerRadius="24dp"
-                        android:layout_marginEnd="8dp"
-                        android:backgroundTint="#FF5252"
-                        app:icon="@drawable/ic_refresh"
-                        app:iconGravity="textStart"
-                        app:iconTint="@android:color/white"
-                        android:padding="12dp"
-                        android:elevation="4dp"
-                        app:rippleColor="#80FFFFFF"/>
-
-                    <!-- Confirm Button -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/confirmReadButton"
                         android:layout_width="0dp"
@@ -214,7 +195,7 @@
                         android:text="אשר קריאה"
                         android:textColor="@android:color/white"
                         app:cornerRadius="24dp"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
                         android:backgroundTint="#4CAF50"
                         app:icon="@drawable/ic_check_circle"
                         app:iconGravity="textStart"
@@ -222,6 +203,24 @@
                         android:padding="12dp"
                         android:elevation="4dp"
                         app:rippleColor="#80FFFFFF"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/resetReadButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="אפס קריאה"
+                        android:textColor="@android:color/white"
+                        app:cornerRadius="24dp"
+                        android:layout_marginStart="8dp"
+                        android:backgroundTint="#FF5252"
+                        app:icon="@drawable/ic_refresh"
+                        app:iconGravity="textStart"
+                        app:iconTint="@android:color/white"
+                        android:padding="12dp"
+                        android:elevation="4dp"
+                        app:rippleColor="#80FFFFFF"/>
+
 
                 </LinearLayout>
 
