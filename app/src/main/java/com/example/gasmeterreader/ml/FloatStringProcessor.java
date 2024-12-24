@@ -8,16 +8,6 @@ public class FloatStringProcessor {
     private static final int LOWER_BOUND_ERROR = -20;
     private static final int MAX_DOT_PLACE = 3;
 
-    public static String insertDot(String str, int positionFromRight) {
-        if (str.length() <= positionFromRight) return str;
-        return str.substring(0, str.length() - positionFromRight) + "." +
-                str.substring(str.length() - positionFromRight);
-    }
-
-    public static boolean hasMoreThanOneDot(String str) {
-        return str.indexOf('.') != str.lastIndexOf('.');
-    }
-
     public static Pair<String, Integer> fixData(String input, String check) {
         if (input == null || check == null) {
             return new Pair<>("None", 0);
@@ -30,6 +20,16 @@ public class FloatStringProcessor {
             return handleSingleDotCase(input, check);
         }
         return new Pair<>("None", 0);
+    }
+
+    private static String insertDot(String str, int positionFromRight) {
+        if (str.length() <= positionFromRight) return str;
+        return str.substring(0, str.length() - positionFromRight) + "." +
+                str.substring(str.length() - positionFromRight);
+    }
+
+    private static boolean hasMoreThanOneDot(String str) {
+        return str.indexOf('.') != str.lastIndexOf('.');
     }
 
     private static String sanitizeInput(String input) {
@@ -89,7 +89,7 @@ public class FloatStringProcessor {
         return new Pair<>(normalizeDecimal(input), status);
     }
 
-    public static String normalizeDecimal(String input) {
+    private static String normalizeDecimal(String input) {
         if (input.matches("0\\.[0-9]+")) {
             return input;
         } else if (input.matches("0+([1-9][0-9]*\\.?[0-9]*|\\.\\d+)")) {
