@@ -4,6 +4,7 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Pair;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,7 @@ public class LiveFeedViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(true);
 
     private final HashMap<String, Integer> detectionCounterData = new HashMap<>();
+    private final HashMap<String, Integer> errorCounterData = new HashMap<>();
     private final int detectionThreshold = 3;
     private Building building;
 
@@ -88,10 +90,14 @@ public class LiveFeedViewModel extends AndroidViewModel {
         }
     }
 
-    private void updateResultTexts(final String dataResult) {
+    private void updateResultTexts(final Pair<String, Integer> dataResult) {
         new Handler(Looper.getMainLooper()).post(() -> {
-            if (!dataResult.isEmpty()) {
-                ResultUtils.addString(dataResult, detectionCounterData);
+            if (dataResult != null && !dataResult.first.isEmpty()) {
+                if (dataResult.second == 1) {
+                    ResultUtils.addString(dataResult.first, detectionCounterData);
+                } else if (!dataResult.first.equals("None")) {
+                    ResultUtils.addString(dataResult.first, errorCounterData);
+                }
             }
 
             if (ResultUtils.getMaxCount(detectionCounterData) >= detectionThreshold){
@@ -115,6 +121,12 @@ public class LiveFeedViewModel extends AndroidViewModel {
         });
     }
 
+    public String getHigherError(){
+        if (ResultUtils.getMaxCount(errorCounterData) >= detectionThreshold) {
+            return ResultUtils.getMostFrequentString(errorCounterData);
+        } else return "";
+    }
+
     public void setReadManual(String read){
         if(listPlace.getValue() != null) {
             List<Read> temp = reads.getValue();
@@ -132,7 +144,8 @@ public class LiveFeedViewModel extends AndroidViewModel {
 
     public void nextRead() {
         detectionCounterData.clear();
-        isDetected.setValue(false);
+        errorCounterData.clear();
+        isDetected.setValue(Boolean.FALSE);
         imageAnalyzer.deleteDataDetect();
         resetError();
         incrementListPlace();
@@ -143,7 +156,8 @@ public class LiveFeedViewModel extends AndroidViewModel {
 
     public void resetDetection(){
         detectionCounterData.clear();
-        isDetected.setValue(false);
+        errorCounterData.clear();
+        isDetected.setValue(Boolean.FALSE);
         imageAnalyzer.deleteDataDetect();
         resetError();
     }
@@ -203,7 +217,8 @@ public class LiveFeedViewModel extends AndroidViewModel {
         if (position >= 0 && position < Objects.requireNonNull(reads.getValue()).size()) {
             listPlace.setValue(position);
             detectionCounterData.clear();
-            isDetected.setValue(false);
+            errorCounterData.clear();
+            isDetected.setValue(Boolean.FALSE);
             imageAnalyzer.deleteDataDetect();
             imageAnalyzer.setRead(Objects.requireNonNull(reads.getValue()).get(position));
         }

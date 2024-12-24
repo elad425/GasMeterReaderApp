@@ -41,17 +41,19 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.VideoV
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         Building building = buildingsList.get(position);
+        int completed = building.getCompleted();
         holder.street.setText(String.format("%s %d", building.getAddress(), building.getBuildingNumber()));
         holder.center.setText(String.format("%d",building.getCenter()));
-        holder.leftTodo.setText(String.format("%d",building.getCompleted()));
+        holder.leftTodo.setText(String.format("%d",completed));
         holder.total.setText(String.format("%d",building.getReadList().size()));
         holder.city.setText(String.format("%s",building.getCity()));
-        holder.isComplete.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
 
         if (building.isComplete()){
             holder.isComplete.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
-        } else if (building.getCompleted() > 0){
+        } else if (completed > 0){
             holder.isComplete.setBackgroundTintList(ColorStateList.valueOf(Color.YELLOW));
+        } else {
+            holder.isComplete.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
         }
 
         holder.itemView.setOnClickListener(v -> {

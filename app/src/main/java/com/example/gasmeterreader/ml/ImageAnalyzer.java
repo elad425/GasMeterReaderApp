@@ -4,11 +4,12 @@ import static com.example.gasmeterreader.utils.BitmapUtils.convertToGrayscale;
 import static com.example.gasmeterreader.utils.BitmapUtils.cropBitmap;
 import static com.example.gasmeterreader.utils.BitmapUtils.mapToOriginalImage;
 import static com.example.gasmeterreader.utils.BitmapUtils.placeOnGrayCanvas;
-import static com.example.gasmeterreader.utils.ResultUtils.fixData;
+import static com.example.gasmeterreader.ml.FloatStringProcessor.fixData;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ImageAnalyzer {
-    private String data = "";
+    private Pair<String, Integer> data;
     private Detector boxDetector;
     private Detector digitsDetectorData;
     private Bitmap originalBitmap;
@@ -64,7 +65,7 @@ public class ImageAnalyzer {
     }
 
     public void deleteDataDetect(){
-        data = "";
+        data = new Pair<>("None",0);
     }
 
     public void detect(Bitmap bitmap) {
@@ -105,17 +106,15 @@ public class ImageAnalyzer {
         for (BoundingBox box : boundingBoxes) {
             classNames.append(box.getClsName());
             if (type.equals("data") && read != null) {
-                String result = fixData(classNames.toString(),String.valueOf(read.getLast_read()));
-                if (!Objects.equals(result, "None")) {
-                    data = result;
-                } else{
+                data = fixData(classNames.toString(),String.valueOf(read.getLast_read()));
+                if (Objects.equals(data.second, 0)) {
                     errorCount+=1;
                 }
             }
         }
     }
 
-    public String getData() {
+    public Pair<String, Integer> getData() {
         return data;
     }
 

@@ -72,6 +72,7 @@ public class LiveFeedActivity extends AppCompatActivity {
     private ExecutorService cameraExecutor;
     private View swipeIndicator;
     private float touchStartY;
+    private Read currentRead;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,8 +190,10 @@ public class LiveFeedActivity extends AppCompatActivity {
     private void showNumberInputDialog() {
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_number_input, null);
         EditText input = viewInflated.findViewById(R.id.input);
+        String errorText = viewModel.getHigherError();
+        input.setText(errorText);
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("קריאה לא בטווח")
+                .setTitle("אשר קריאה חריגה")
                 .setView(viewInflated)
                 .setPositiveButton("אישור", (dialogInterface, which) -> {
                     String enteredNumber = input.getText().toString();
@@ -200,6 +203,11 @@ public class LiveFeedActivity extends AppCompatActivity {
                     viewModel.setPaused(false);
                 })
                 .setNegativeButton("ביטול", (dialogInterface, which) -> viewModel.setPaused(false))
+                .setNeutralButton("שמור קריאה קודמת", (dialogInterface, which) -> {
+                    viewModel.setReadManual(String.valueOf(currentRead.getLast_read()));
+                    viewModel.setPaused(false);
+                    Toast.makeText(this, "קריאה קודמת נשמרה", Toast.LENGTH_SHORT).show();
+                })
                 .setCancelable(false)
                 .create();
 
@@ -295,7 +303,7 @@ public class LiveFeedActivity extends AppCompatActivity {
 
     private void updateReadDisplay(int place) {
         List<Read> readList = Objects.requireNonNull(viewModel.getReadList().getValue());
-        Read currentRead = readList.get(place);
+        currentRead = readList.get(place);
 
         serialText.setText(String.valueOf(currentRead.getMeter_id()));
         apartmentText.setText(String.format(Locale.ENGLISH,"דירה %d", currentRead.getApartment()));
